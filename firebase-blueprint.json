@@ -1,0 +1,108 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "System users with roles",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["admin", "manager", "worker"] },
+        "name": { "type": "string" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Gas cylinder types and stock",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "price": { "type": "number" },
+        "stockQuantity": { "type": "number" },
+        "lowStockThreshold": { "type": "number" }
+      },
+      "required": ["name", "type", "price", "stockQuantity", "lowStockThreshold"]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "Record of a gas sale",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "quantity": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["cash", "card", "transfer"] },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "workerId": { "type": "string" }
+      },
+      "required": ["customerId", "customerName", "productId", "productName", "quantity", "totalAmount", "paymentMethod", "timestamp", "workerId"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Purchases from suppliers",
+      "type": "object",
+      "properties": {
+        "supplierName": { "type": "string" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "quantity": { "type": "number" },
+        "totalCost": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "received"] },
+        "orderDate": { "type": "string", "format": "date-time" }
+      },
+      "required": ["supplierName", "productName", "quantity", "totalCost", "status", "orderDate"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Customer information",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "purchaseHistory": { "type": "array" }
+      },
+      "required": ["name", "phone", "address"]
+    },
+    "CylinderMovement": {
+      "title": "CylinderMovement",
+      "description": "Tracking cylinder flow",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "type": { "type": "string", "enum": ["sent_out", "returned"] },
+        "quantity": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["productName", "type", "quantity", "timestamp"]
+    },
+    "Rental": {
+      "title": "Rental",
+      "description": "Cylinder rental tracking",
+      "type": "object",
+      "properties": {
+        "customerName": { "type": "string" },
+        "productName": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "returned": { "type": "boolean" },
+        "area": { "type": "string" }
+      },
+      "required": ["customerName", "productName", "dueDate", "returned", "area"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": { "schema": "User", "description": "User profiles" },
+    "/products/{productId}": { "schema": "Product", "description": "Gas products and stock" },
+    "/sales/{saleId}": { "schema": "Sale", "description": "Sales records" },
+    "/orders/{orderId}": { "schema": "Order", "description": "Supplier orders" },
+    "/customers/{customerId}": { "schema": "Customer", "description": "Customer database" },
+    "/movements/{movementId}": { "schema": "CylinderMovement", "description": "Cylinder movement logs" },
+    "/rentals/{rentalId}": { "schema": "Rental", "description": "Cylinder rentals" }
+  }
+}

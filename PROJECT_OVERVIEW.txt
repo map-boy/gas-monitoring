@@ -1,0 +1,5549 @@
+﻿======================================================================
+GAS_CHECKING PROJECT OVERVIEW — 2026-04-15 14:28:11
+======================================================================
+
+----------------------------------------------------------------------
+FILE: .env.example
+SIZE: 445 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+[binary skipped]
+
+----------------------------------------------------------------------
+FILE: .gitignore
+SIZE: 73 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+
+----------------------------------------------------------------------
+FILE: components.json
+SIZE: 515 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "base-nova",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/index.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "rtl": false,
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks"
+  },
+  "menuColor": "default",
+  "menuAccent": "subtle",
+  "registries": {}
+}
+
+
+----------------------------------------------------------------------
+FILE: components\ui\avatar.tsx
+SIZE: 3024 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import * as React from "react"
+import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar"
+
+import { cn } from "@/lib/utils"
+
+function Avatar({
+  className,
+  size = "default",
+  ...props
+}: AvatarPrimitive.Root.Props & {
+  size?: "default" | "sm" | "lg"
+}) {
+  return (
+    <AvatarPrimitive.Root
+      data-slot="avatar"
+      data-size={size}
+      className={cn(
+        "group/avatar relative flex size-8 shrink-0 rounded-full select-none after:absolute after:inset-0 after:rounded-full after:border after:border-border after:mix-blend-darken data-[size=lg]:size-10 data-[size=sm]:size-6 dark:after:mix-blend-lighten",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
+  return (
+    <AvatarPrimitive.Image
+      data-slot="avatar-image"
+      className={cn(
+        "aspect-square size-full rounded-full object-cover",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function AvatarFallback({
+  className,
+  ...props
+}: AvatarPrimitive.Fallback.Props) {
+  return (
+    <AvatarPrimitive.Fallback
+      data-slot="avatar-fallback"
+      className={cn(
+        "flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground group-data-[size=sm]/avatar:text-xs",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span
+      data-slot="avatar-badge"
+      className={cn(
+        "absolute right-0 bottom-0 z-10 inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground bg-blend-color ring-2 ring-background select-none",
+        "group-data-[size=sm]/avatar:size-2 group-data-[size=sm]/avatar:[&>svg]:hidden",
+        "group-data-[size=default]/avatar:size-2.5 group-data-[size=default]/avatar:[&>svg]:size-2",
+        "group-data-[size=lg]/avatar:size-3 group-data-[size=lg]/avatar:[&>svg]:size-2",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="avatar-group"
+      className={cn(
+        "group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function AvatarGroupCount({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="avatar-group-count"
+      className={cn(
+        "relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm text-muted-foreground ring-2 ring-background group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-6 [&>svg]:size-4 group-has-data-[size=lg]/avatar-group:[&>svg]:size-5 group-has-data-[size=sm]/avatar-group:[&>svg]:size-3",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+  AvatarBadge,
+}
+
+
+----------------------------------------------------------------------
+FILE: components\ui\badge.tsx
+SIZE: 1925 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const badgeVariants = cva(
+  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        secondary:
+          "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+        destructive:
+          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
+        outline:
+          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+        ghost:
+          "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+function Badge({
+  className,
+  variant = "default",
+  render,
+  ...props
+}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
+  return useRender({
+    defaultTagName: "span",
+    props: mergeProps<"span">(
+      {
+        className: cn(badgeVariants({ variant }), className),
+      },
+      props
+    ),
+    render,
+    state: {
+      slot: "badge",
+      variant,
+    },
+  })
+}
+
+export { Badge, badgeVariants }
+
+
+----------------------------------------------------------------------
+FILE: components\ui\button.tsx
+SIZE: 3197 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { Button as ButtonPrimitive } from "@base-ui/react/button"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const buttonVariants = cva(
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        outline:
+          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+        ghost:
+          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+        destructive:
+          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default:
+          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        icon: "size-8",
+        "icon-xs":
+          "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm":
+          "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
+        "icon-lg": "size-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+function Button({
+  className,
+  variant = "default",
+  size = "default",
+  ...props
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  return (
+    <ButtonPrimitive
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
+}
+
+export { Button, buttonVariants }
+
+
+----------------------------------------------------------------------
+FILE: components\ui\card.tsx
+SIZE: 2641 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+function Card({
+  className,
+  size = "default",
+  ...props
+}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+  return (
+    <div
+      data-slot="card"
+      data-size={size}
+      className={cn(
+        "group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 text-sm text-card-foreground ring-1 ring-foreground/10 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-header"
+      className={cn(
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-4 group-data-[size=sm]/card:px-3 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-title"
+      className={cn(
+        "font-heading text-base leading-snug font-medium group-data-[size=sm]/card:text-sm",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-description"
+      className={cn("text-sm text-muted-foreground", className)}
+      {...props}
+    />
+  )
+}
+
+function CardAction({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-action"
+      className={cn(
+        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CardContent({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-content"
+      className={cn("px-4 group-data-[size=sm]/card:px-3", className)}
+      {...props}
+    />
+  )
+}
+
+function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-footer"
+      className={cn(
+        "flex items-center rounded-b-xl border-t bg-muted/50 p-4 group-data-[size=sm]/card:p-3",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardAction,
+  CardDescription,
+  CardContent,
+}
+
+
+----------------------------------------------------------------------
+FILE: components\ui\chart.tsx
+SIZE: 10487 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import * as React from "react"
+import * as RechartsPrimitive from "recharts"
+import type { TooltipValueType } from "recharts"
+
+import { cn } from "@/lib/utils"
+
+// Format: { THEME_NAME: CSS_SELECTOR }
+const THEMES = { light: "", dark: ".dark" } as const
+
+const INITIAL_DIMENSION = { width: 320, height: 200 } as const
+type TooltipNameType = number | string
+
+export type ChartConfig = Record<
+  string,
+  {
+    label?: React.ReactNode
+    icon?: React.ComponentType
+  } & (
+    | { color?: string; theme?: never }
+    | { color?: never; theme: Record<keyof typeof THEMES, string> }
+  )
+>
+
+type ChartContextProps = {
+  config: ChartConfig
+}
+
+const ChartContext = React.createContext<ChartContextProps | null>(null)
+
+function useChart() {
+  const context = React.useContext(ChartContext)
+
+  if (!context) {
+    throw new Error("useChart must be used within a <ChartContainer />")
+  }
+
+  return context
+}
+
+function ChartContainer({
+  id,
+  className,
+  children,
+  config,
+  initialDimension = INITIAL_DIMENSION,
+  ...props
+}: React.ComponentProps<"div"> & {
+  config: ChartConfig
+  children: React.ComponentProps<
+    typeof RechartsPrimitive.ResponsiveContainer
+  >["children"]
+  initialDimension?: {
+    width: number
+    height: number
+  }
+}) {
+  const uniqueId = React.useId()
+  const chartId = `chart-${id ?? uniqueId.replace(/:/g, "")}`
+
+  return (
+    <ChartContext.Provider value={{ config }}>
+      <div
+        data-slot="chart"
+        data-chart={chartId}
+        className={cn(
+          "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector]:outline-hidden [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-hidden",
+          className
+        )}
+        {...props}
+      >
+        <ChartStyle id={chartId} config={config} />
+        <RechartsPrimitive.ResponsiveContainer
+          initialDimension={initialDimension}
+        >
+          {children}
+        </RechartsPrimitive.ResponsiveContainer>
+      </div>
+    </ChartContext.Provider>
+  )
+}
+
+const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
+  const colorConfig = Object.entries(config).filter(
+    ([, config]) => config.theme ?? config.color
+  )
+
+  if (!colorConfig.length) {
+    return null
+  }
+
+  return (
+    <style
+      dangerouslySetInnerHTML={{
+        __html: Object.entries(THEMES)
+          .map(
+            ([theme, prefix]) => `
+${prefix} [data-chart=${id}] {
+${colorConfig
+  .map(([key, itemConfig]) => {
+    const color =
+      itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ??
+      itemConfig.color
+    return color ? `  --color-${key}: ${color};` : null
+  })
+  .join("\n")}
+}
+`
+          )
+          .join("\n"),
+      }}
+    />
+  )
+}
+
+const ChartTooltip = RechartsPrimitive.Tooltip
+
+function ChartTooltipContent({
+  active,
+  payload,
+  className,
+  indicator = "dot",
+  hideLabel = false,
+  hideIndicator = false,
+  label,
+  labelFormatter,
+  labelClassName,
+  formatter,
+  color,
+  nameKey,
+  labelKey,
+}: React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
+  React.ComponentProps<"div"> & {
+    hideLabel?: boolean
+    hideIndicator?: boolean
+    indicator?: "line" | "dot" | "dashed"
+    nameKey?: string
+    labelKey?: string
+  } & Omit<
+    RechartsPrimitive.DefaultTooltipContentProps<
+      TooltipValueType,
+      TooltipNameType
+    >,
+    "accessibilityLayer"
+  >) {
+  const { config } = useChart()
+
+  const tooltipLabel = React.useMemo(() => {
+    if (hideLabel || !payload?.length) {
+      return null
+    }
+
+    const [item] = payload
+    const key = `${labelKey ?? item?.dataKey ?? item?.name ?? "value"}`
+    const itemConfig = getPayloadConfigFromPayload(config, item, key)
+    const value =
+      !labelKey && typeof label === "string"
+        ? (config[label]?.label ?? label)
+        : itemConfig?.label
+
+    if (labelFormatter) {
+      return (
+        <div className={cn("font-medium", labelClassName)}>
+          {labelFormatter(value, payload)}
+        </div>
+      )
+    }
+
+    if (!value) {
+      return null
+    }
+
+    return <div className={cn("font-medium", labelClassName)}>{value}</div>
+  }, [
+    label,
+    labelFormatter,
+    payload,
+    hideLabel,
+    labelClassName,
+    config,
+    labelKey,
+  ])
+
+  if (!active || !payload?.length) {
+    return null
+  }
+
+  const nestLabel = payload.length === 1 && indicator !== "dot"
+
+  return (
+    <div
+      className={cn(
+        "grid min-w-32 items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
+        className
+      )}
+    >
+      {!nestLabel ? tooltipLabel : null}
+      <div className="grid gap-1.5">
+        {payload
+          .filter((item) => item.type !== "none")
+          .map((item, index) => {
+            const key = `${nameKey ?? item.name ?? item.dataKey ?? "value"}`
+            const itemConfig = getPayloadConfigFromPayload(config, item, key)
+            const indicatorColor = color ?? item.payload?.fill ?? item.color
+
+            return (
+              <div
+                key={index}
+                className={cn(
+                  "flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 [&>svg]:text-muted-foreground",
+                  indicator === "dot" && "items-center"
+                )}
+              >
+                {formatter && item?.value !== undefined && item.name ? (
+                  formatter(item.value, item.name, item, index, item.payload)
+                ) : (
+                  <>
+                    {itemConfig?.icon ? (
+                      <itemConfig.icon />
+                    ) : (
+                      !hideIndicator && (
+                        <div
+                          className={cn(
+                            "shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)",
+                            {
+                              "h-2.5 w-2.5": indicator === "dot",
+                              "w-1": indicator === "line",
+                              "w-0 border-[1.5px] border-dashed bg-transparent":
+                                indicator === "dashed",
+                              "my-0.5": nestLabel && indicator === "dashed",
+                            }
+                          )}
+                          style={
+                            {
+                              "--color-bg": indicatorColor,
+                              "--color-border": indicatorColor,
+                            } as React.CSSProperties
+                          }
+                        />
+                      )
+                    )}
+                    <div
+                      className={cn(
+                        "flex flex-1 justify-between leading-none",
+                        nestLabel ? "items-end" : "items-center"
+                      )}
+                    >
+                      <div className="grid gap-1.5">
+                        {nestLabel ? tooltipLabel : null}
+                        <span className="text-muted-foreground">
+                          {itemConfig?.label ?? item.name}
+                        </span>
+                      </div>
+                      {item.value != null && (
+                        <span className="font-mono font-medium text-foreground tabular-nums">
+                          {typeof item.value === "number"
+                            ? item.value.toLocaleString()
+                            : String(item.value)}
+                        </span>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            )
+          })}
+      </div>
+    </div>
+  )
+}
+
+const ChartLegend = RechartsPrimitive.Legend
+
+function ChartLegendContent({
+  className,
+  hideIcon = false,
+  payload,
+  verticalAlign = "bottom",
+  nameKey,
+}: React.ComponentProps<"div"> & {
+  hideIcon?: boolean
+  nameKey?: string
+} & RechartsPrimitive.DefaultLegendContentProps) {
+  const { config } = useChart()
+
+  if (!payload?.length) {
+    return null
+  }
+
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-center gap-4",
+        verticalAlign === "top" ? "pb-3" : "pt-3",
+        className
+      )}
+    >
+      {payload
+        .filter((item) => item.type !== "none")
+        .map((item, index) => {
+          const key = `${nameKey ?? item.dataKey ?? "value"}`
+          const itemConfig = getPayloadConfigFromPayload(config, item, key)
+
+          return (
+            <div
+              key={index}
+              className={cn(
+                "flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground"
+              )}
+            >
+              {itemConfig?.icon && !hideIcon ? (
+                <itemConfig.icon />
+              ) : (
+                <div
+                  className="h-2 w-2 shrink-0 rounded-[2px]"
+                  style={{
+                    backgroundColor: item.color,
+                  }}
+                />
+              )}
+              {itemConfig?.label}
+            </div>
+          )
+        })}
+    </div>
+  )
+}
+
+function getPayloadConfigFromPayload(
+  config: ChartConfig,
+  payload: unknown,
+  key: string
+) {
+  if (typeof payload !== "object" || payload === null) {
+    return undefined
+  }
+
+  const payloadPayload =
+    "payload" in payload &&
+    typeof payload.payload === "object" &&
+    payload.payload !== null
+      ? payload.payload
+      : undefined
+
+  let configLabelKey: string = key
+
+  if (
+    key in payload &&
+    typeof payload[key as keyof typeof payload] === "string"
+  ) {
+    configLabelKey = payload[key as keyof typeof payload] as string
+  } else if (
+    payloadPayload &&
+    key in payloadPayload &&
+    typeof payloadPayload[key as keyof typeof payloadPayload] === "string"
+  ) {
+    configLabelKey = payloadPayload[
+      key as keyof typeof payloadPayload
+    ] as string
+  }
+
+  return configLabelKey in config ? config[configLabelKey] : config[key]
+}
+
+export {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  ChartStyle,
+}
+
+
+----------------------------------------------------------------------
+FILE: components\ui\checkbox.tsx
+SIZE: 1343 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
+
+import { cn } from "@/lib/utils"
+import { CheckIcon } from "lucide-react"
+
+function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
+  return (
+    <CheckboxPrimitive.Root
+      data-slot="checkbox"
+      className={cn(
+        "peer relative flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-input transition-colors outline-none group-has-disabled/field:opacity-50 after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 aria-invalid:aria-checked:border-primary dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground dark:data-checked:bg-primary",
+        className
+      )}
+      {...props}
+    >
+      <CheckboxPrimitive.Indicator
+        data-slot="checkbox-indicator"
+        className="grid place-content-center text-current transition-none [&>svg]:size-3.5"
+      >
+        <CheckIcon
+        />
+      </CheckboxPrimitive.Indicator>
+    </CheckboxPrimitive.Root>
+  )
+}
+
+export { Checkbox }
+
+
+----------------------------------------------------------------------
+FILE: components\ui\dialog.tsx
+SIZE: 4075 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+"use client"
+
+import * as React from "react"
+import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { XIcon } from "lucide-react"
+
+function Dialog({ ...props }: DialogPrimitive.Root.Props) {
+  return <DialogPrimitive.Root data-slot="dialog" {...props} />
+}
+
+function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
+  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
+}
+
+function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
+  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
+}
+
+function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
+  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
+}
+
+function DialogOverlay({
+  className,
+  ...props
+}: DialogPrimitive.Backdrop.Props) {
+  return (
+    <DialogPrimitive.Backdrop
+      data-slot="dialog-overlay"
+      className={cn(
+        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function DialogContent({
+  className,
+  children,
+  showCloseButton = true,
+  ...props
+}: DialogPrimitive.Popup.Props & {
+  showCloseButton?: boolean
+}) {
+  return (
+    <DialogPortal>
+      <DialogOverlay />
+      <DialogPrimitive.Popup
+        data-slot="dialog-content"
+        className={cn(
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          className
+        )}
+        {...props}
+      >
+        {children}
+        {showCloseButton && (
+          <DialogPrimitive.Close
+            data-slot="dialog-close"
+            render={
+              <Button
+                variant="ghost"
+                className="absolute top-2 right-2"
+                size="icon-sm"
+              />
+            }
+          >
+            <XIcon
+            />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        )}
+      </DialogPrimitive.Popup>
+    </DialogPortal>
+  )
+}
+
+function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="dialog-header"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  )
+}
+
+function DialogFooter({
+  className,
+  showCloseButton = false,
+  children,
+  ...props
+}: React.ComponentProps<"div"> & {
+  showCloseButton?: boolean
+}) {
+  return (
+    <div
+      data-slot="dialog-footer"
+      className={cn(
+        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      {showCloseButton && (
+        <DialogPrimitive.Close render={<Button variant="outline" />}>
+          Close
+        </DialogPrimitive.Close>
+      )}
+    </div>
+  )
+}
+
+function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
+  return (
+    <DialogPrimitive.Title
+      data-slot="dialog-title"
+      className={cn(
+        "font-heading text-base leading-none font-medium",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function DialogDescription({
+  className,
+  ...props
+}: DialogPrimitive.Description.Props) {
+  return (
+    <DialogPrimitive.Description
+      data-slot="dialog-description"
+      className={cn(
+        "text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
+}
+
+
+----------------------------------------------------------------------
+FILE: components\ui\dropdown-menu.tsx
+SIZE: 8736 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+"use client"
+
+import * as React from "react"
+import { Menu as MenuPrimitive } from "@base-ui/react/menu"
+
+import { cn } from "@/lib/utils"
+import { ChevronRightIcon, CheckIcon } from "lucide-react"
+
+function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
+  return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
+}
+
+function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
+  return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
+}
+
+function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
+  return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
+}
+
+function DropdownMenuContent({
+  align = "start",
+  alignOffset = 0,
+  side = "bottom",
+  sideOffset = 4,
+  className,
+  ...props
+}: MenuPrimitive.Popup.Props &
+  Pick<
+    MenuPrimitive.Positioner.Props,
+    "align" | "alignOffset" | "side" | "sideOffset"
+  >) {
+  return (
+    <MenuPrimitive.Portal>
+      <MenuPrimitive.Positioner
+        className="isolate z-50 outline-none"
+        align={align}
+        alignOffset={alignOffset}
+        side={side}
+        sideOffset={sideOffset}
+      >
+        <MenuPrimitive.Popup
+          data-slot="dropdown-menu-content"
+          className={cn("z-50 max-h-(--available-height) w-(--anchor-width) min-w-32 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 outline-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:overflow-hidden data-closed:fade-out-0 data-closed:zoom-out-95", className )}
+          {...props}
+        />
+      </MenuPrimitive.Positioner>
+    </MenuPrimitive.Portal>
+  )
+}
+
+function DropdownMenuGroup({ ...props }: MenuPrimitive.Group.Props) {
+  return <MenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />
+}
+
+function DropdownMenuLabel({
+  className,
+  inset,
+  ...props
+}: MenuPrimitive.GroupLabel.Props & {
+  inset?: boolean
+}) {
+  return (
+    <MenuPrimitive.GroupLabel
+      data-slot="dropdown-menu-label"
+      data-inset={inset}
+      className={cn(
+        "px-1.5 py-1 text-xs font-medium text-muted-foreground data-inset:pl-7",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function DropdownMenuItem({
+  className,
+  inset,
+  variant = "default",
+  ...props
+}: MenuPrimitive.Item.Props & {
+  inset?: boolean
+  variant?: "default" | "destructive"
+}) {
+  return (
+    <MenuPrimitive.Item
+      data-slot="dropdown-menu-item"
+      data-inset={inset}
+      data-variant={variant}
+      className={cn(
+        "group/dropdown-menu-item relative flex cursor-default items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-inset:pl-7 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-[variant=destructive]:*:[svg]:text-destructive",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function DropdownMenuSub({ ...props }: MenuPrimitive.SubmenuRoot.Props) {
+  return <MenuPrimitive.SubmenuRoot data-slot="dropdown-menu-sub" {...props} />
+}
+
+function DropdownMenuSubTrigger({
+  className,
+  inset,
+  children,
+  ...props
+}: MenuPrimitive.SubmenuTrigger.Props & {
+  inset?: boolean
+}) {
+  return (
+    <MenuPrimitive.SubmenuTrigger
+      data-slot="dropdown-menu-sub-trigger"
+      data-inset={inset}
+      className={cn(
+        "flex cursor-default items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-inset:pl-7 data-popup-open:bg-accent data-popup-open:text-accent-foreground data-open:bg-accent data-open:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      <ChevronRightIcon className="ml-auto" />
+    </MenuPrimitive.SubmenuTrigger>
+  )
+}
+
+function DropdownMenuSubContent({
+  align = "start",
+  alignOffset = -3,
+  side = "right",
+  sideOffset = 0,
+  className,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuContent>) {
+  return (
+    <DropdownMenuContent
+      data-slot="dropdown-menu-sub-content"
+      className={cn("w-auto min-w-[96px] rounded-lg bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className )}
+      align={align}
+      alignOffset={alignOffset}
+      side={side}
+      sideOffset={sideOffset}
+      {...props}
+    />
+  )
+}
+
+function DropdownMenuCheckboxItem({
+  className,
+  children,
+  checked,
+  inset,
+  ...props
+}: MenuPrimitive.CheckboxItem.Props & {
+  inset?: boolean
+}) {
+  return (
+    <MenuPrimitive.CheckboxItem
+      data-slot="dropdown-menu-checkbox-item"
+      data-inset={inset}
+      className={cn(
+        "relative flex cursor-default items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-inset:pl-7 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className
+      )}
+      checked={checked}
+      {...props}
+    >
+      <span
+        className="pointer-events-none absolute right-2 flex items-center justify-center"
+        data-slot="dropdown-menu-checkbox-item-indicator"
+      >
+        <MenuPrimitive.CheckboxItemIndicator>
+          <CheckIcon
+          />
+        </MenuPrimitive.CheckboxItemIndicator>
+      </span>
+      {children}
+    </MenuPrimitive.CheckboxItem>
+  )
+}
+
+function DropdownMenuRadioGroup({ ...props }: MenuPrimitive.RadioGroup.Props) {
+  return (
+    <MenuPrimitive.RadioGroup
+      data-slot="dropdown-menu-radio-group"
+      {...props}
+    />
+  )
+}
+
+function DropdownMenuRadioItem({
+  className,
+  children,
+  inset,
+  ...props
+}: MenuPrimitive.RadioItem.Props & {
+  inset?: boolean
+}) {
+  return (
+    <MenuPrimitive.RadioItem
+      data-slot="dropdown-menu-radio-item"
+      data-inset={inset}
+      className={cn(
+        "relative flex cursor-default items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-inset:pl-7 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className
+      )}
+      {...props}
+    >
+      <span
+        className="pointer-events-none absolute right-2 flex items-center justify-center"
+        data-slot="dropdown-menu-radio-item-indicator"
+      >
+        <MenuPrimitive.RadioItemIndicator>
+          <CheckIcon
+          />
+        </MenuPrimitive.RadioItemIndicator>
+      </span>
+      {children}
+    </MenuPrimitive.RadioItem>
+  )
+}
+
+function DropdownMenuSeparator({
+  className,
+  ...props
+}: MenuPrimitive.Separator.Props) {
+  return (
+    <MenuPrimitive.Separator
+      data-slot="dropdown-menu-separator"
+      className={cn("-mx-1 my-1 h-px bg-border", className)}
+      {...props}
+    />
+  )
+}
+
+function DropdownMenuShortcut({
+  className,
+  ...props
+}: React.ComponentProps<"span">) {
+  return (
+    <span
+      data-slot="dropdown-menu-shortcut"
+      className={cn(
+        "ml-auto text-xs tracking-widest text-muted-foreground group-focus/dropdown-menu-item:text-accent-foreground",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export {
+  DropdownMenu,
+  DropdownMenuPortal,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+}
+
+
+----------------------------------------------------------------------
+FILE: components\ui\input.tsx
+SIZE: 1040 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import * as React from "react"
+import { Input as InputPrimitive } from "@base-ui/react/input"
+
+import { cn } from "@/lib/utils"
+
+function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+  return (
+    <InputPrimitive
+      type={type}
+      data-slot="input"
+      className={cn(
+        "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export { Input }
+
+
+----------------------------------------------------------------------
+FILE: components\ui\label.tsx
+SIZE: 504 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+function Label({ className, ...props }: React.ComponentProps<"label">) {
+  return (
+    <label
+      data-slot="label"
+      className={cn(
+        "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export { Label }
+
+
+----------------------------------------------------------------------
+FILE: components\ui\scroll-area.tsx
+SIZE: 1610 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import * as React from "react"
+import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area"
+
+import { cn } from "@/lib/utils"
+
+function ScrollArea({
+  className,
+  children,
+  ...props
+}: ScrollAreaPrimitive.Root.Props) {
+  return (
+    <ScrollAreaPrimitive.Root
+      data-slot="scroll-area"
+      className={cn("relative", className)}
+      {...props}
+    >
+      <ScrollAreaPrimitive.Viewport
+        data-slot="scroll-area-viewport"
+        className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1"
+      >
+        {children}
+      </ScrollAreaPrimitive.Viewport>
+      <ScrollBar />
+      <ScrollAreaPrimitive.Corner />
+    </ScrollAreaPrimitive.Root>
+  )
+}
+
+function ScrollBar({
+  className,
+  orientation = "vertical",
+  ...props
+}: ScrollAreaPrimitive.Scrollbar.Props) {
+  return (
+    <ScrollAreaPrimitive.Scrollbar
+      data-slot="scroll-area-scrollbar"
+      data-orientation={orientation}
+      orientation={orientation}
+      className={cn(
+        "flex touch-none p-px transition-colors select-none data-horizontal:h-2.5 data-horizontal:flex-col data-horizontal:border-t data-horizontal:border-t-transparent data-vertical:h-full data-vertical:w-2.5 data-vertical:border-l data-vertical:border-l-transparent",
+        className
+      )}
+      {...props}
+    >
+      <ScrollAreaPrimitive.Thumb
+        data-slot="scroll-area-thumb"
+        className="relative flex-1 rounded-full bg-border"
+      />
+    </ScrollAreaPrimitive.Scrollbar>
+  )
+}
+
+export { ScrollArea, ScrollBar }
+
+
+----------------------------------------------------------------------
+FILE: components\ui\select.tsx
+SIZE: 6655 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+"use client"
+
+import * as React from "react"
+import { Select as SelectPrimitive } from "@base-ui/react/select"
+
+import { cn } from "@/lib/utils"
+import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
+
+const Select = SelectPrimitive.Root
+
+function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
+  return (
+    <SelectPrimitive.Group
+      data-slot="select-group"
+      className={cn("scroll-my-1 p-1", className)}
+      {...props}
+    />
+  )
+}
+
+function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
+  return (
+    <SelectPrimitive.Value
+      data-slot="select-value"
+      className={cn("flex flex-1 text-left", className)}
+      {...props}
+    />
+  )
+}
+
+function SelectTrigger({
+  className,
+  size = "default",
+  children,
+  ...props
+}: SelectPrimitive.Trigger.Props & {
+  size?: "sm" | "default"
+}) {
+  return (
+    <SelectPrimitive.Trigger
+      data-slot="select-trigger"
+      data-size={size}
+      className={cn(
+        "flex w-fit items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      <SelectPrimitive.Icon
+        render={
+          <ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground" />
+        }
+      />
+    </SelectPrimitive.Trigger>
+  )
+}
+
+function SelectContent({
+  className,
+  children,
+  side = "bottom",
+  sideOffset = 4,
+  align = "center",
+  alignOffset = 0,
+  alignItemWithTrigger = true,
+  ...props
+}: SelectPrimitive.Popup.Props &
+  Pick<
+    SelectPrimitive.Positioner.Props,
+    "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger"
+  >) {
+  return (
+    <SelectPrimitive.Portal>
+      <SelectPrimitive.Positioner
+        side={side}
+        sideOffset={sideOffset}
+        align={align}
+        alignOffset={alignOffset}
+        alignItemWithTrigger={alignItemWithTrigger}
+        className="isolate z-50"
+      >
+        <SelectPrimitive.Popup
+          data-slot="select-content"
+          data-align-trigger={alignItemWithTrigger}
+          className={cn("relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className )}
+          {...props}
+        >
+          <SelectScrollUpButton />
+          <SelectPrimitive.List>{children}</SelectPrimitive.List>
+          <SelectScrollDownButton />
+        </SelectPrimitive.Popup>
+      </SelectPrimitive.Positioner>
+    </SelectPrimitive.Portal>
+  )
+}
+
+function SelectLabel({
+  className,
+  ...props
+}: SelectPrimitive.GroupLabel.Props) {
+  return (
+    <SelectPrimitive.GroupLabel
+      data-slot="select-label"
+      className={cn("px-1.5 py-1 text-xs text-muted-foreground", className)}
+      {...props}
+    />
+  )
+}
+
+function SelectItem({
+  className,
+  children,
+  ...props
+}: SelectPrimitive.Item.Props) {
+  return (
+    <SelectPrimitive.Item
+      data-slot="select-item"
+      className={cn(
+        "relative flex w-full cursor-default items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        className
+      )}
+      {...props}
+    >
+      <SelectPrimitive.ItemText className="flex flex-1 shrink-0 gap-2 whitespace-nowrap">
+        {children}
+      </SelectPrimitive.ItemText>
+      <SelectPrimitive.ItemIndicator
+        render={
+          <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center" />
+        }
+      >
+        <CheckIcon className="pointer-events-none" />
+      </SelectPrimitive.ItemIndicator>
+    </SelectPrimitive.Item>
+  )
+}
+
+function SelectSeparator({
+  className,
+  ...props
+}: SelectPrimitive.Separator.Props) {
+  return (
+    <SelectPrimitive.Separator
+      data-slot="select-separator"
+      className={cn("pointer-events-none -mx-1 my-1 h-px bg-border", className)}
+      {...props}
+    />
+  )
+}
+
+function SelectScrollUpButton({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.ScrollUpArrow>) {
+  return (
+    <SelectPrimitive.ScrollUpArrow
+      data-slot="select-scroll-up-button"
+      className={cn(
+        "top-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
+        className
+      )}
+      {...props}
+    >
+      <ChevronUpIcon
+      />
+    </SelectPrimitive.ScrollUpArrow>
+  )
+}
+
+function SelectScrollDownButton({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.ScrollDownArrow>) {
+  return (
+    <SelectPrimitive.ScrollDownArrow
+      data-slot="select-scroll-down-button"
+      className={cn(
+        "bottom-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
+        className
+      )}
+      {...props}
+    >
+      <ChevronDownIcon
+      />
+    </SelectPrimitive.ScrollDownArrow>
+  )
+}
+
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+}
+
+
+----------------------------------------------------------------------
+FILE: components\ui\separator.tsx
+SIZE: 545 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+"use client"
+
+import { Separator as SeparatorPrimitive } from "@base-ui/react/separator"
+
+import { cn } from "@/lib/utils"
+
+function Separator({
+  className,
+  orientation = "horizontal",
+  ...props
+}: SeparatorPrimitive.Props) {
+  return (
+    <SeparatorPrimitive
+      data-slot="separator"
+      orientation={orientation}
+      className={cn(
+        "shrink-0 bg-border data-horizontal:h-px data-horizontal:w-full data-vertical:w-px data-vertical:self-stretch",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export { Separator }
+
+
+----------------------------------------------------------------------
+FILE: components\ui\sheet.tsx
+SIZE: 4419 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import * as React from "react"
+import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { XIcon } from "lucide-react"
+
+function Sheet({ ...props }: SheetPrimitive.Root.Props) {
+  return <SheetPrimitive.Root data-slot="sheet" {...props} />
+}
+
+function SheetTrigger({ ...props }: SheetPrimitive.Trigger.Props) {
+  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
+}
+
+function SheetClose({ ...props }: SheetPrimitive.Close.Props) {
+  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
+}
+
+function SheetPortal({ ...props }: SheetPrimitive.Portal.Props) {
+  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />
+}
+
+function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
+  return (
+    <SheetPrimitive.Backdrop
+      data-slot="sheet-overlay"
+      className={cn(
+        "fixed inset-0 z-50 bg-black/10 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function SheetContent({
+  className,
+  children,
+  side = "right",
+  showCloseButton = true,
+  ...props
+}: SheetPrimitive.Popup.Props & {
+  side?: "top" | "right" | "bottom" | "left"
+  showCloseButton?: boolean
+}) {
+  return (
+    <SheetPortal>
+      <SheetOverlay />
+      <SheetPrimitive.Popup
+        data-slot="sheet-content"
+        data-side={side}
+        className={cn(
+          "fixed z-50 flex flex-col gap-4 bg-popover bg-clip-padding text-sm text-popover-foreground shadow-lg transition duration-200 ease-in-out data-ending-style:opacity-0 data-starting-style:opacity-0 data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:border-t data-[side=bottom]:data-ending-style:translate-y-[2.5rem] data-[side=bottom]:data-starting-style:translate-y-[2.5rem] data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-3/4 data-[side=left]:border-r data-[side=left]:data-ending-style:translate-x-[-2.5rem] data-[side=left]:data-starting-style:translate-x-[-2.5rem] data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-3/4 data-[side=right]:border-l data-[side=right]:data-ending-style:translate-x-[2.5rem] data-[side=right]:data-starting-style:translate-x-[2.5rem] data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:border-b data-[side=top]:data-ending-style:translate-y-[-2.5rem] data-[side=top]:data-starting-style:translate-y-[-2.5rem] data-[side=left]:sm:max-w-sm data-[side=right]:sm:max-w-sm",
+          className
+        )}
+        {...props}
+      >
+        {children}
+        {showCloseButton && (
+          <SheetPrimitive.Close
+            data-slot="sheet-close"
+            render={
+              <Button
+                variant="ghost"
+                className="absolute top-3 right-3"
+                size="icon-sm"
+              />
+            }
+          >
+            <XIcon
+            />
+            <span className="sr-only">Close</span>
+          </SheetPrimitive.Close>
+        )}
+      </SheetPrimitive.Popup>
+    </SheetPortal>
+  )
+}
+
+function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="sheet-header"
+      className={cn("flex flex-col gap-0.5 p-4", className)}
+      {...props}
+    />
+  )
+}
+
+function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="sheet-footer"
+      className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+      {...props}
+    />
+  )
+}
+
+function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
+  return (
+    <SheetPrimitive.Title
+      data-slot="sheet-title"
+      className={cn(
+        "font-heading text-base font-medium text-foreground",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function SheetDescription({
+  className,
+  ...props
+}: SheetPrimitive.Description.Props) {
+  return (
+    <SheetPrimitive.Description
+      data-slot="sheet-description"
+      className={cn("text-sm text-muted-foreground", className)}
+      {...props}
+    />
+  )
+}
+
+export {
+  Sheet,
+  SheetTrigger,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+}
+
+
+----------------------------------------------------------------------
+FILE: components\ui\sonner.tsx
+SIZE: 1226 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+"use client"
+
+import { useTheme } from "next-themes"
+import { Toaster as Sonner, type ToasterProps } from "sonner"
+import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
+
+const Toaster = ({ ...props }: ToasterProps) => {
+  const { theme = "system" } = useTheme()
+
+  return (
+    <Sonner
+      theme={theme as ToasterProps["theme"]}
+      className="toaster group"
+      icons={{
+        success: (
+          <CircleCheckIcon className="size-4" />
+        ),
+        info: (
+          <InfoIcon className="size-4" />
+        ),
+        warning: (
+          <TriangleAlertIcon className="size-4" />
+        ),
+        error: (
+          <OctagonXIcon className="size-4" />
+        ),
+        loading: (
+          <Loader2Icon className="size-4 animate-spin" />
+        ),
+      }}
+      style={
+        {
+          "--normal-bg": "var(--popover)",
+          "--normal-text": "var(--popover-foreground)",
+          "--normal-border": "var(--border)",
+          "--border-radius": "var(--radius)",
+        } as React.CSSProperties
+      }
+      toastOptions={{
+        classNames: {
+          toast: "cn-toast",
+        },
+      }}
+      {...props}
+    />
+  )
+}
+
+export { Toaster }
+
+
+----------------------------------------------------------------------
+FILE: components\ui\table.tsx
+SIZE: 2388 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+function Table({ className, ...props }: React.ComponentProps<"table">) {
+  return (
+    <div
+      data-slot="table-container"
+      className="relative w-full overflow-x-auto"
+    >
+      <table
+        data-slot="table"
+        className={cn("w-full caption-bottom text-sm", className)}
+        {...props}
+      />
+    </div>
+  )
+}
+
+function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
+  return (
+    <thead
+      data-slot="table-header"
+      className={cn("[&_tr]:border-b", className)}
+      {...props}
+    />
+  )
+}
+
+function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
+  return (
+    <tbody
+      data-slot="table-body"
+      className={cn("[&_tr:last-child]:border-0", className)}
+      {...props}
+    />
+  )
+}
+
+function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
+  return (
+    <tfoot
+      data-slot="table-footer"
+      className={cn(
+        "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
+  return (
+    <tr
+      data-slot="table-row"
+      className={cn(
+        "border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+  return (
+    <th
+      data-slot="table-head"
+      className={cn(
+        "h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+  return (
+    <td
+      data-slot="table-cell"
+      className={cn(
+        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TableCaption({
+  className,
+  ...props
+}: React.ComponentProps<"caption">) {
+  return (
+    <caption
+      data-slot="table-caption"
+      className={cn("mt-4 text-sm text-muted-foreground", className)}
+      {...props}
+    />
+  )
+}
+
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+}
+
+
+----------------------------------------------------------------------
+FILE: components\ui\tabs.tsx
+SIZE: 3497 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+"use client"
+
+import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+function Tabs({
+  className,
+  orientation = "horizontal",
+  ...props
+}: TabsPrimitive.Root.Props) {
+  return (
+    <TabsPrimitive.Root
+      data-slot="tabs"
+      data-orientation={orientation}
+      className={cn(
+        "group/tabs flex gap-2 data-horizontal:flex-col",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+const tabsListVariants = cva(
+  "group/tabs-list inline-flex w-fit items-center justify-center rounded-lg p-[3px] text-muted-foreground group-data-horizontal/tabs:h-8 group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col data-[variant=line]:rounded-none",
+  {
+    variants: {
+      variant: {
+        default: "bg-muted",
+        line: "gap-1 bg-transparent",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+function TabsList({
+  className,
+  variant = "default",
+  ...props
+}: TabsPrimitive.List.Props & VariantProps<typeof tabsListVariants>) {
+  return (
+    <TabsPrimitive.List
+      data-slot="tabs-list"
+      data-variant={variant}
+      className={cn(tabsListVariants({ variant }), className)}
+      {...props}
+    />
+  )
+}
+
+function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
+  return (
+    <TabsPrimitive.Tab
+      data-slot="tabs-trigger"
+      className={cn(
+        "relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-1.5 py-0.5 text-sm font-medium whitespace-nowrap text-foreground/60 transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 has-data-[icon=inline-end]:pr-1 has-data-[icon=inline-start]:pl-1 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:text-muted-foreground dark:hover:text-foreground group-data-[variant=default]/tabs-list:data-active:shadow-sm group-data-[variant=line]/tabs-list:data-active:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent dark:group-data-[variant=line]/tabs-list:data-active:border-transparent dark:group-data-[variant=line]/tabs-list:data-active:bg-transparent",
+        "data-active:bg-background data-active:text-foreground dark:data-active:border-input dark:data-active:bg-input/30 dark:data-active:text-foreground",
+        "after:absolute after:bg-foreground after:opacity-0 after:transition-opacity group-data-horizontal/tabs:after:inset-x-0 group-data-horizontal/tabs:after:bottom-[-5px] group-data-horizontal/tabs:after:h-0.5 group-data-vertical/tabs:after:inset-y-0 group-data-vertical/tabs:after:-right-1 group-data-vertical/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
+  return (
+    <TabsPrimitive.Panel
+      data-slot="tabs-content"
+      className={cn("flex-1 text-sm outline-none", className)}
+      {...props}
+    />
+  )
+}
+
+export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants }
+
+
+----------------------------------------------------------------------
+FILE: firebase-applet-config.json
+SIZE: 428 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+{
+  "projectId": "gen-lang-client-0532185102",
+  "appId": "1:1006068604820:web:25392046e70ee238b1b981",
+  "apiKey": "AIzaSyA3YyH4tSZuncjkKiQmOsNnkN8zpMrY6NM",
+  "authDomain": "gen-lang-client-0532185102.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-417ac97c-1452-4294-9c14-8778aa88084b",
+  "storageBucket": "gen-lang-client-0532185102.firebasestorage.app",
+  "messagingSenderId": "1006068604820",
+  "measurementId": ""
+}
+
+----------------------------------------------------------------------
+FILE: firebase-blueprint.json
+SIZE: 4197 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "System users with roles",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["admin", "manager", "worker"] },
+        "name": { "type": "string" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Gas cylinder types and stock",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "price": { "type": "number" },
+        "stockQuantity": { "type": "number" },
+        "lowStockThreshold": { "type": "number" }
+      },
+      "required": ["name", "type", "price", "stockQuantity", "lowStockThreshold"]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "Record of a gas sale",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "quantity": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["cash", "card", "transfer"] },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "workerId": { "type": "string" }
+      },
+      "required": ["customerId", "customerName", "productId", "productName", "quantity", "totalAmount", "paymentMethod", "timestamp", "workerId"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Purchases from suppliers",
+      "type": "object",
+      "properties": {
+        "supplierName": { "type": "string" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "quantity": { "type": "number" },
+        "totalCost": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "received"] },
+        "orderDate": { "type": "string", "format": "date-time" }
+      },
+      "required": ["supplierName", "productName", "quantity", "totalCost", "status", "orderDate"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Customer information",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "purchaseHistory": { "type": "array" }
+      },
+      "required": ["name", "phone", "address"]
+    },
+    "CylinderMovement": {
+      "title": "CylinderMovement",
+      "description": "Tracking cylinder flow",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "type": { "type": "string", "enum": ["sent_out", "returned"] },
+        "quantity": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["productName", "type", "quantity", "timestamp"]
+    },
+    "Rental": {
+      "title": "Rental",
+      "description": "Cylinder rental tracking",
+      "type": "object",
+      "properties": {
+        "customerName": { "type": "string" },
+        "productName": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "returned": { "type": "boolean" },
+        "area": { "type": "string" }
+      },
+      "required": ["customerName", "productName", "dueDate", "returned", "area"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": { "schema": "User", "description": "User profiles" },
+    "/products/{productId}": { "schema": "Product", "description": "Gas products and stock" },
+    "/sales/{saleId}": { "schema": "Sale", "description": "Sales records" },
+    "/orders/{orderId}": { "schema": "Order", "description": "Supplier orders" },
+    "/customers/{customerId}": { "schema": "Customer", "description": "Customer database" },
+    "/movements/{movementId}": { "schema": "CylinderMovement", "description": "Cylinder movement logs" },
+    "/rentals/{rentalId}": { "schema": "Rental", "description": "Cylinder rentals" }
+  }
+}
+
+
+----------------------------------------------------------------------
+FILE: firestore.rules
+SIZE: 5706 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {uid}
+    // Fields:
+    //   - uid: string (required) - User's unique ID
+    //   - email: string (required) - User's email
+    //   - role: string (required, enum: ['admin', 'manager', 'worker']) - User's role
+    //   - name: string (optional) - User's display name
+    //
+    // Collection: products
+    // Document ID: {productId}
+    // Fields:
+    //   - name: string (required, size < 100)
+    //   - type: string (required, size < 50)
+    //   - price: number (required, positive)
+    //   - stockQuantity: number (required, >= 0)
+    //   - lowStockThreshold: number (required, >= 0)
+    //
+    // Collection: sales
+    // Document ID: {saleId}
+    // Fields:
+    //   - customerId: string (required)
+    //   - customerName: string (required, size < 100)
+    //   - productId: string (required)
+    //   - productName: string (required, size < 100)
+    //   - quantity: number (required, positive)
+    //   - totalAmount: number (required, positive)
+    //   - paymentMethod: string (required, enum: ['cash', 'card', 'transfer'])
+    //   - timestamp: timestamp (required)
+    //   - workerId: string (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated();
+    }
+
+    function isManager() {
+      return isAuthenticated();
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidUser(data) {
+      return hasRequiredFields(['uid', 'email', 'role']) &&
+             isValidEmail(data.email) &&
+             data.role in ['admin', 'manager', 'worker'] &&
+             (!('name' in data) || (data.name is string && data.name.size() < 100));
+    }
+
+    function isValidProduct(data) {
+      return hasRequiredFields(['name', 'type', 'price', 'stockQuantity', 'lowStockThreshold']) &&
+             data.name is string && data.name.size() < 100 &&
+             data.type is string && data.type.size() < 50 &&
+             data.price is number && data.price > 0 &&
+             data.stockQuantity is number && data.stockQuantity >= 0 &&
+             data.lowStockThreshold is number && data.lowStockThreshold >= 0;
+    }
+
+    function isValidSale(data) {
+      return hasRequiredFields(['customerId', 'customerName', 'productId', 'productName', 'quantity', 'totalAmount', 'paymentMethod', 'timestamp', 'workerId']) &&
+             data.customerName is string && data.customerName.size() < 100 &&
+             data.productName is string && data.productName.size() < 100 &&
+             data.quantity is number && data.quantity > 0 &&
+             data.totalAmount is number && data.totalAmount > 0 &&
+             data.paymentMethod in ['cash', 'card', 'transfer'] &&
+             data.timestamp is timestamp;
+    }
+
+    function isValidOrder(data) {
+      return hasRequiredFields(['supplierName', 'productName', 'quantity', 'totalCost', 'status', 'orderDate']) &&
+             data.supplierName is string && data.supplierName.size() < 100 &&
+             data.productName is string && data.productName.size() < 100 &&
+             data.quantity is number && data.quantity > 0 &&
+             data.totalCost is number && data.totalCost > 0 &&
+             data.status in ['pending', 'received'] &&
+             data.orderDate is timestamp;
+    }
+
+    function isValidCustomer(data) {
+      return hasRequiredFields(['name', 'phone', 'address']) &&
+             data.name is string && data.name.size() < 100 &&
+             data.phone is string && data.phone.size() < 20 &&
+             data.address is string && data.address.size() < 200;
+    }
+
+    function isValidMovement(data) {
+      return hasRequiredFields(['productName', 'type', 'quantity', 'timestamp']) &&
+             data.productName is string && data.productName.size() < 100 &&
+             data.type in ['sent_out', 'returned'] &&
+             data.quantity is number && data.quantity > 0 &&
+             data.timestamp is timestamp;
+    }
+
+    function isValidRental(data) {
+      return hasRequiredFields(['customerName', 'productName', 'dueDate', 'returned', 'area']) &&
+             data.customerName is string && data.customerName.size() < 100 &&
+             data.productName is string && data.productName.size() < 100 &&
+             data.dueDate is timestamp &&
+             data.returned is bool &&
+             data.area is string && data.area.size() < 100;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    match /{path=**} {
+      allow read, write: if true;
+    }
+  }
+}
+
+
+----------------------------------------------------------------------
+FILE: index.html
+SIZE: 311 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Google AI Studio App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+
+----------------------------------------------------------------------
+FILE: metadata.json
+SIZE: 229 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+{
+  "name": "GasFlow Manager",
+  "description": "A comprehensive Gas Selling Business Management System for tracking stock, sales, customers, and cylinder movements.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
+
+
+----------------------------------------------------------------------
+FILE: package.json
+SIZE: 1378 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+{
+  "name": "react-example",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server.ts",
+    "build": "vite build",
+    "start": "node server.ts",
+    "preview": "vite preview",
+    "clean": "rm -rf dist",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.4.0",
+    "@fontsource-variable/geist": "^5.2.8",
+    "@google/genai": "^1.29.0",
+    "@hookform/resolvers": "^5.2.2",
+    "@tailwindcss/vite": "^4.1.14",
+    "@vitejs/plugin-react": "^5.0.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "firebase": "^12.12.0",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "next-themes": "^0.4.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.72.1",
+    "react-router-dom": "^7.14.1",
+    "recharts": "^3.8.0",
+    "shadcn": "^4.2.0",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.5.0",
+    "tw-animate-css": "^1.4.0",
+    "vite": "^6.2.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.21",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}
+
+
+----------------------------------------------------------------------
+FILE: README.md
+SIZE: 550 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
+
+# Run and deploy your AI Studio app
+
+This contains everything you need to run your app locally.
+
+View your app in AI Studio: https://ai.studio/apps/417ac97c-1452-4294-9c14-8778aa88084b
+
+## Run Locally
+
+**Prerequisites:**  Node.js
+
+
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
+
+
+----------------------------------------------------------------------
+FILE: server.ts
+SIZE: 1130 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import express from "express";
+import { createServer as createViteServer } from "vite";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+async function startServer() {
+  const app = express();
+  const PORT = 3000;
+
+  app.use(express.json());
+
+  // API routes
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
+  // Vite middleware for development
+  if (process.env.NODE_ENV !== "production") {
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: "spa",
+    });
+    app.use(vite.middlewares);
+  } else {
+    const distPath = path.join(process.cwd(), 'dist');
+    app.use(express.static(distPath));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  }
+
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on http://0.0.0.0:${PORT}`);
+  });
+}
+
+startServer().catch((err) => {
+  console.error("Failed to start server:", err);
+  process.exit(1);
+});
+
+
+----------------------------------------------------------------------
+FILE: src\App.tsx
+SIZE: 2583 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import DashboardLayout from './components/layout/DashboardLayout';
+import { Toaster } from '@/components/ui/sonner';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { useAuth } from './hooks/useAuth';
+import { Login } from './components/auth/Login';
+import { Loader2 } from 'lucide-react';
+import { LanguageProvider } from './hooks/useLanguage';
+import { ThemeProvider } from './components/theme-provider';
+
+import Dashboard from './components/dashboard/Dashboard';
+import { StockTable as Stock } from './components/stock/StockTable';
+import { SalesSystem as Sales } from './components/sales/SalesSystem';
+import { CustomersTable as Customers } from './components/customers/CustomersTable';
+import { OrdersManagement as Orders } from './components/orders/OrdersManagement';
+import { MovementTracking as Movements } from './components/movements/MovementTracking';
+import { RentalSystem as Rentals } from './components/rentals/RentalSystem';
+import { AdminPortal as Admin } from './components/admin/AdminPortal';
+
+export default function App() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <ThemeProvider defaultTheme="light" storageKey="gasflow-ui-theme">
+      <LanguageProvider>
+        <ErrorBoundary>
+          {!user ? (
+            <>
+              <Login />
+              <Toaster />
+            </>
+          ) : (
+            <Router>
+              <DashboardLayout>
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/stock" element={<Stock />} />
+                  <Route path="/sales" element={<Sales />} />
+                  <Route path="/customers" element={<Customers />} />
+                  <Route path="/orders" element={<Orders />} />
+                  <Route path="/movements" element={<Movements />} />
+                  <Route path="/rentals" element={<Rentals />} />
+                  <Route path="/admin" element={<Admin />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </DashboardLayout>
+              <Toaster />
+            </Router>
+          )}
+        </ErrorBoundary>
+      </LanguageProvider>
+    </ThemeProvider>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\admin\AdminPortal.tsx
+SIZE: 10325 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { 
+  TrendingUp, 
+  Users, 
+  Package, 
+  AlertTriangle, 
+  DollarSign, 
+  BarChart3, 
+  PieChart as PieChartIcon,
+  ArrowUpRight,
+  ArrowDownRight,
+  Activity,
+  Lock
+} from "lucide-react";
+import { 
+  Bar, 
+  BarChart, 
+  ResponsiveContainer, 
+  XAxis, 
+  YAxis, 
+  Tooltip, 
+  Line, 
+  LineChart,
+  PieChart,
+  Pie,
+  Cell
+} from "recharts";
+import { useLanguage } from '@/hooks/useLanguage';
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+
+const revenueData = [
+  { name: "Jan", revenue: 4500, sales: 120 },
+  { name: "Feb", revenue: 5200, sales: 145 },
+  { name: "Mar", revenue: 4800, sales: 132 },
+  { name: "Apr", revenue: 6100, sales: 178 },
+  { name: "May", revenue: 5900, sales: 165 },
+  { name: "Jun", revenue: 7200, sales: 210 },
+];
+
+const productData = [
+  { name: "6kg Domestic", value: 400 },
+  { name: "12kg Domestic", value: 300 },
+  { name: "15kg Industrial", value: 200 },
+  { name: "20kg Industrial", value: 100 },
+];
+
+const COLORS = ['#0ea5e9', '#6366f1', '#8b5cf6', '#ec4899'];
+
+export function AdminPortal() {
+  const { t } = useLanguage();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === 'test') {
+      setIsAuthenticated(true);
+      toast.success("Admin access granted");
+    } else {
+      toast.error("Invalid admin password");
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="bg-primary/10 p-3 rounded-full">
+                <Lock className="w-6 h-6 text-primary" />
+              </div>
+            </div>
+            <CardTitle>{t('admin')}</CardTitle>
+            <CardDescription>{t('accessAdmin')}</CardDescription>
+          </CardHeader>
+          <form onSubmit={handleAdminLogin}>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="admin-password">{t('adminPassword')}</Label>
+                <Input 
+                  id="admin-password" 
+                  type="password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button type="submit" className="w-full">{t('submit')}</Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-3xl font-bold tracking-tight">{t('admin')}</h2>
+        <p className="text-muted-foreground">{t('insights')}</p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Monthly Growth</CardTitle>
+            <TrendingUp className="h-4 w-4 text-emerald-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">+24.5%</div>
+            <p className="text-xs text-muted-foreground">+4.1% from last month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Customer Retention</CardTitle>
+            <Users className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">88%</div>
+            <p className="text-xs text-muted-foreground">+2% from last quarter</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Inventory Value</CardTitle>
+            <Package className="h-4 w-4 text-amber-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">$42,500</div>
+            <p className="text-xs text-muted-foreground">Across 450 units</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Risk Alerts</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-destructive" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">3</div>
+            <p className="text-xs text-muted-foreground">Low stock items requiring action</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>Revenue vs Sales Performance</CardTitle>
+            <CardDescription>Performance comparison over the last 6 months</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[350px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={revenueData}>
+                  <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                  />
+                  <Bar dataKey="revenue" fill="currentColor" radius={[4, 4, 0, 0]} className="fill-primary" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle>Product Distribution</CardTitle>
+            <CardDescription>Sales volume by cylinder type</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[350px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={productData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {productData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="mt-4 space-y-2">
+                {productData.map((item, i) => (
+                  <div key={i} className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[i] }} />
+                      <span>{item.name}</span>
+                    </div>
+                    <span className="font-bold">{item.value} units</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="w-5 h-5 text-primary" />
+              System Health
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm">Database Latency</span>
+              <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500">24ms</Badge>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm">API Uptime</span>
+              <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500">99.9%</Badge>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm">Backup Status</span>
+              <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500">Success</Badge>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="col-span-2">
+          <CardHeader>
+            <CardTitle>Recent Administrative Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[
+                { action: "Price Updated", user: "Admin", time: "2 hours ago", target: "12kg Cylinder" },
+                { action: "New Manager Added", user: "Admin", time: "5 hours ago", target: "Jean-Claude" },
+                { action: "Stock Reconciled", user: "Admin", time: "Yesterday", target: "Warehouse A" },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">{item.action}</p>
+                    <p className="text-xs text-muted-foreground">{item.user} • {item.target}</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{item.time}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\auth\Login.tsx
+SIZE: 2526 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Flame, Lock } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
+import { toast } from "sonner";
+
+export function Login() {
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const { t } = useLanguage();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    const success = await login(password);
+    if (success) {
+      toast.success("Logged in successfully");
+    } else {
+      toast.error("Invalid password");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-muted/50 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <div className="flex justify-center mb-4">
+            <div className="bg-primary p-3 rounded-2xl">
+              <Flame className="w-8 h-8 text-primary-foreground" />
+            </div>
+          </div>
+          <CardTitle className="text-2xl font-bold">GasFlow Manager</CardTitle>
+          <CardDescription>
+            {t('welcome')}
+          </CardDescription>
+        </CardHeader>
+        <form onSubmit={handleLogin}>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="password">{t('password')}</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input 
+                  id="password" 
+                  type="password" 
+                  placeholder="••••••••" 
+                  required 
+                  className="pl-10"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" className="w-full h-12 text-lg" disabled={loading}>
+              {loading ? "..." : t('signIn')}
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\common\ErrorBoundary.tsx
+SIZE: 2388 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, RefreshCcw } from "lucide-react";
+
+interface Props {
+  children: ReactNode;
+}
+
+interface State {
+  hasError: boolean;
+  error: Error | null;
+}
+
+export class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      hasError: false,
+      error: null,
+    };
+  }
+
+  public static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
+  }
+
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("Uncaught error:", error, errorInfo);
+  }
+
+  public render() {
+    if (this.state.hasError) {
+      let errorMessage = "An unexpected error occurred.";
+      
+      try {
+        // Check if it's a Firestore error JSON
+        const parsed = JSON.parse(this.state.error?.message || "");
+        if (parsed.error && parsed.operationType) {
+          errorMessage = `Database Error: ${parsed.operationType} operation failed. ${parsed.error}`;
+        }
+      } catch (e) {
+        errorMessage = this.state.error?.message || errorMessage;
+      }
+
+      return (
+        <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
+          <Card className="w-full max-w-md border-destructive/50">
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-4">
+                <div className="bg-destructive/10 p-3 rounded-full">
+                  <AlertTriangle className="w-8 h-8 text-destructive" />
+                </div>
+              </div>
+              <CardTitle className="text-xl font-bold">Something went wrong</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-center">
+              <p className="text-sm text-muted-foreground">
+                {errorMessage}
+              </p>
+              <Button 
+                onClick={() => window.location.reload()} 
+                className="w-full gap-2"
+              >
+                <RefreshCcw className="w-4 h-4" />
+                Reload Application
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\customers\CustomersTable.tsx
+SIZE: 5745 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { useEffect, useState } from "react";
+import { 
+  collection, 
+  onSnapshot, 
+  addDoc, 
+  query, 
+  orderBy 
+} from "firebase/firestore";
+import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
+import { Customer } from "@/types";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search, UserPlus, Phone, MapPin, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+
+export function CustomersTable() {
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const q = query(collection(db, "customers"), orderBy("name", "asc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setCustomers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Customer[]);
+      setLoading(false);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, "customers");
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleAddCustomer = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get("name") as string,
+      phone: formData.get("phone") as string,
+      address: formData.get("address") as string,
+      purchaseHistory: []
+    };
+
+    try {
+      await addDoc(collection(db, "customers"), data);
+      toast.success("Customer added");
+      setIsDialogOpen(false);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, "customers");
+    }
+  };
+
+  const filteredCustomers = customers.filter(c => 
+    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.phone.includes(searchTerm)
+  );
+
+  if (loading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin" /></div>;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 className="text-2xl font-bold">Customers</h2>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input 
+              className="pl-9" 
+              placeholder="Search customers..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <Button className="gap-2" onClick={() => setIsDialogOpen(true)}>
+            <UserPlus className="w-4 h-4" />
+            Add Customer
+          </Button>
+        </div>
+      </div>
+      <div className="border rounded-lg bg-card overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Contact</TableHead>
+              <TableHead>Address</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredCustomers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                  No customers found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredCustomers.map((customer) => (
+                <TableRow key={customer.id}>
+                  <TableCell className="font-medium">{customer.name}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Phone className="w-3 h-3 text-muted-foreground" />
+                      {customer.phone}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2 text-sm">
+                      <MapPin className="w-3 h-3 text-muted-foreground" />
+                      {customer.address}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="outline" size="sm">View History</Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Customer</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAddCustomer} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input id="name" name="name" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input id="phone" name="phone" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="address">Address</Label>
+              <Input id="address" name="address" required />
+            </div>
+            <DialogFooter>
+              <Button type="submit" className="w-full">Save Customer</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\dashboard\Dashboard.tsx
+SIZE: 4643 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { useEffect, useState } from "react";
+import { 
+  collection, 
+  onSnapshot, 
+  query, 
+  orderBy,
+  Timestamp,
+  where,
+  getDocs
+} from "firebase/firestore";
+import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
+import { Sale, Product } from "@/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  LayoutDashboard, 
+  Users, 
+  Package, 
+  TrendingUp, 
+  ArrowUpRight, 
+  ArrowDownRight,
+  Loader2 
+} from "lucide-react";
+import { OverviewChart } from "./OverviewChart";
+import { RecentSales } from "./RecentSales";
+
+import { useLanguage } from '@/hooks/useLanguage';
+
+export default function Dashboard() {
+  const { t } = useLanguage();
+  const [stats, setStats] = useState({
+    revenue: 0,
+    customers: 0,
+    stock: 0,
+    rentals: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [recentSales, setRecentSales] = useState<Sale[]>([]);
+
+  useEffect(() => {
+    // Fetch stats
+    const unsubSales = onSnapshot(collection(db, "sales"), (snapshot) => {
+      const sales = snapshot.docs.map(doc => doc.data() as Sale);
+      const totalRevenue = sales.reduce((acc, s) => acc + s.totalAmount, 0);
+      setRecentSales(sales.sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis()).slice(0, 5));
+      setStats(prev => ({ ...prev, revenue: totalRevenue }));
+    });
+
+    const unsubCustomers = onSnapshot(collection(db, "customers"), (snapshot) => {
+      setStats(prev => ({ ...prev, customers: snapshot.size }));
+    });
+
+    const unsubProducts = onSnapshot(collection(db, "products"), (snapshot) => {
+      const totalStock = snapshot.docs.reduce((acc, doc) => acc + (doc.data().stockQuantity || 0), 0);
+      setStats(prev => ({ ...prev, stock: totalStock }));
+      setLoading(false);
+    });
+
+    const unsubRentals = onSnapshot(query(collection(db, "rentals"), where("returned", "==", false)), (snapshot) => {
+      setStats(prev => ({ ...prev, rentals: snapshot.size }));
+    });
+
+    return () => {
+      unsubSales();
+      unsubCustomers();
+      unsubProducts();
+      unsubRentals();
+    };
+  }, []);
+
+  if (loading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin" /></div>;
+
+  return (
+    <div className="space-y-8">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard 
+          title={t('totalRevenue')} 
+          value={`$${stats.revenue.toLocaleString()}`} 
+          icon={TrendingUp}
+          trend="+12.5%"
+          trendType="up"
+        />
+        <StatCard 
+          title={t('activeCustomers')} 
+          value={stats.customers.toString()} 
+          icon={Users}
+          trend="+3"
+          trendType="up"
+        />
+        <StatCard 
+          title={t('gasStock')} 
+          value={stats.stock.toString()} 
+          icon={Package}
+          trend="-5%"
+          trendType="down"
+        />
+        <StatCard 
+          title={t('activeRentals')} 
+          value={stats.rentals.toString()} 
+          icon={LayoutDashboard}
+          trend="+2"
+          trendType="up"
+        />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="lg:col-span-4">
+          <CardHeader>
+            <CardTitle>{t('overview')}</CardTitle>
+          </CardHeader>
+          <CardContent className="pl-2">
+            <OverviewChart />
+          </CardContent>
+        </Card>
+        <Card className="lg:col-span-3">
+          <CardHeader>
+            <CardTitle>{t('recentSales')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RecentSales sales={recentSales} />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ title, value, icon: Icon, trend, trendType }: any) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        <div className="flex items-center text-xs mt-1">
+          {trendType === 'up' ? (
+            <ArrowUpRight className="h-3 w-3 text-emerald-500 mr-1" />
+          ) : (
+            <ArrowDownRight className="h-3 w-3 text-destructive mr-1" />
+          )}
+          <span className={trendType === 'up' ? 'text-emerald-500' : 'text-destructive'}>
+            {trend}
+          </span>
+          <span className="text-muted-foreground ml-1">from last month</span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\dashboard\OverviewChart.tsx
+SIZE: 2103 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { useEffect, useState } from "react";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
+import { collection, onSnapshot, query, where, Timestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { startOfWeek, endOfWeek, eachDayOfInterval, format, isSameDay } from "date-fns";
+import { Sale } from "@/types";
+
+export function OverviewChart() {
+  const [chartData, setChartData] = useState<any[]>([]);
+
+  useEffect(() => {
+    const start = startOfWeek(new Date());
+    const end = endOfWeek(new Date());
+    const days = eachDayOfInterval({ start, end });
+
+    const q = query(
+      collection(db, "sales"),
+      where("timestamp", ">=", Timestamp.fromDate(start)),
+      where("timestamp", "<=", Timestamp.fromDate(end))
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const sales = snapshot.docs.map(doc => doc.data() as Sale);
+      
+      const data = days.map(day => {
+        const daySales = sales.filter(s => isSameDay(s.timestamp.toDate(), day));
+        const total = daySales.reduce((acc, s) => acc + s.totalAmount, 0);
+        return {
+          name: format(day, 'EEE'),
+          total
+        };
+      });
+
+      setChartData(data);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <ResponsiveContainer width="100%" height={350}>
+      <BarChart data={chartData}>
+        <XAxis
+          dataKey="name"
+          stroke="#888888"
+          fontSize={12}
+          tickLine={false}
+          axisLine={false}
+        />
+        <YAxis
+          stroke="#888888"
+          fontSize={12}
+          tickLine={false}
+          axisLine={false}
+          tickFormatter={(value) => `$${value}`}
+        />
+        <Tooltip 
+          cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+          contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+        />
+        <Bar
+          dataKey="total"
+          fill="currentColor"
+          radius={[4, 4, 0, 0]}
+          className="fill-primary"
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\dashboard\RecentSales.tsx
+SIZE: 1274 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Sale } from "@/types";
+import { format } from "date-fns";
+
+interface RecentSalesProps {
+  sales: Sale[];
+}
+
+export function RecentSales({ sales }: RecentSalesProps) {
+  return (
+    <div className="space-y-8">
+      {sales.length === 0 ? (
+        <p className="text-sm text-muted-foreground text-center py-4">No recent sales</p>
+      ) : (
+        sales.map((sale, i) => (
+          <div key={i} className="flex items-center">
+            <Avatar className="h-9 w-9">
+              <AvatarImage src={`https://avatar.iran.liara.run/username?username=${sale.customerName}`} alt="Avatar" />
+              <AvatarFallback>{sale.customerName.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div className="ml-4 space-y-1">
+              <p className="text-sm font-medium leading-none">{sale.customerName}</p>
+              <p className="text-xs text-muted-foreground">
+                {sale.productName} • {format(sale.timestamp.toDate(), 'HH:mm')}
+              </p>
+            </div>
+            <div className="ml-auto font-medium text-emerald-500">
+              +${sale.totalAmount.toFixed(2)}
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\dashboard\StatCard.tsx
+SIZE: 1318 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  description?: string;
+  icon: LucideIcon;
+  trend?: {
+    value: number;
+    isPositive: boolean;
+  };
+  className?: string;
+}
+
+export function StatCard({ title, value, description, icon: Icon, trend, className }: StatCardProps) {
+  return (
+    <Card className={cn("overflow-hidden", className)}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        {(description || trend) && (
+          <p className="text-xs text-muted-foreground mt-1">
+            {trend && (
+              <span className={cn(
+                "font-medium mr-1",
+                trend.isPositive ? "text-emerald-500" : "text-rose-500"
+              )}>
+                {trend.isPositive ? "+" : "-"}{trend.value}%
+              </span>
+            )}
+            {description}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\layout\DashboardLayout.tsx
+SIZE: 11943 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { 
+  LayoutDashboard, 
+  Package, 
+  ShoppingCart, 
+  Users, 
+  Truck, 
+  History, 
+  Settings, 
+  LogOut, 
+  Flame, 
+  Menu,
+  ChevronLeft,
+  ChevronRight,
+  Globe,
+  ShieldCheck
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/hooks/useLanguage';
+import { useTheme } from '@/components/theme-provider';
+import { Language } from '@/lib/translations';
+import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Moon, Sun, Monitor } from 'lucide-react';
+
+interface DashboardLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const location = useLocation();
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
+  const [isMobileOpen, setIsMobileOpen] = React.useState(false);
+  const { profile, logout } = useAuth();
+  const { t, language, setLanguage } = useLanguage();
+  const { theme, setTheme } = useTheme();
+
+  const navItems = [
+    { icon: LayoutDashboard, label: t('dashboard'), href: '/' },
+    { icon: Package, label: t('stock'), href: '/stock' },
+    { icon: ShoppingCart, label: t('sales'), href: '/sales' },
+    { icon: Users, label: t('customers'), href: '/customers' },
+    { icon: Truck, label: t('orders'), href: '/orders' },
+    { icon: History, label: t('movements'), href: '/movements' },
+    { icon: Settings, label: t('rentals'), href: '/rentals' },
+    { icon: ShieldCheck, label: t('admin'), href: '/admin' },
+  ];
+
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully");
+  };
+
+  const getLanguageLabel = (lang: Language) => {
+    switch (lang) {
+      case 'en': return 'English';
+      case 'rw': return 'Kinyarwanda';
+      case 'ar': return 'العربية';
+      default: return 'English';
+    }
+  };
+
+  const getThemeIcon = () => {
+    switch (theme) {
+      case 'light': return <Sun className="w-5 h-5" />;
+      case 'dark': return <Moon className="w-5 h-5" />;
+      case 'system': return <Monitor className="w-5 h-5" />;
+      default: return <Sun className="w-5 h-5" />;
+    }
+  };
+
+  const getThemeLabel = () => {
+    switch (theme) {
+      case 'light': return t('light');
+      case 'dark': return t('dark');
+      case 'system': return t('system');
+      default: return t('light');
+    }
+  };
+
+  return (
+    <div className="flex h-screen bg-background text-foreground overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      {/* Sidebar for desktop */}
+      <aside 
+        className={cn(
+          "hidden md:flex flex-col border-r bg-card transition-all duration-300 ease-in-out relative",
+          isSidebarCollapsed ? "w-20" : "w-64"
+        )}
+      >
+        <div className={cn("p-6 flex items-center gap-2 overflow-hidden", isSidebarCollapsed && "justify-center px-0")}>
+          <div className="bg-primary p-2 rounded-lg shrink-0">
+            <Flame className="w-6 h-6 text-primary-foreground" />
+          </div>
+          {!isSidebarCollapsed && (
+            <span className="font-bold text-xl tracking-tight whitespace-nowrap">GasFlow</span>
+          )}
+        </div>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "absolute top-20 h-6 w-6 rounded-full border bg-background shadow-sm z-10",
+            language === 'ar' ? "-left-3" : "-right-3"
+          )}
+          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        >
+          {isSidebarCollapsed ? (language === 'ar' ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />) : (language === 'ar' ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />)}
+        </Button>
+
+        <ScrollArea className="flex-1 px-4">
+          <nav className="space-y-2 py-4">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                to={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 group relative",
+                  location.pathname === item.href
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "hover:bg-accent text-muted-foreground hover:text-foreground",
+                  isSidebarCollapsed && "justify-center px-2"
+                )}
+              >
+                <item.icon className={cn("w-5 h-5 shrink-0", location.pathname === item.href ? "text-primary-foreground" : "group-hover:text-primary")} />
+                {!isSidebarCollapsed && <span className="font-medium whitespace-nowrap">{item.label}</span>}
+                {isSidebarCollapsed && (
+                  <div className={cn(
+                    "absolute bg-popover text-popover-foreground px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-lg border whitespace-nowrap z-50",
+                    language === 'ar' ? "right-14" : "left-14"
+                  )}>
+                    {item.label}
+                  </div>
+                )}
+              </Link>
+            ))}
+          </nav>
+        </ScrollArea>
+
+        <div className="p-4 border-t space-y-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger 
+              render={
+                <Button variant="ghost" className={cn("w-full justify-start gap-3", isSidebarCollapsed && "justify-center px-0")}>
+                  {getThemeIcon()}
+                  {!isSidebarCollapsed && <span>{getThemeLabel()}</span>}
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setTheme('light')}>
+                <Sun className="w-4 h-4 mr-2" />
+                {t('light')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme('dark')}>
+                <Moon className="w-4 h-4 mr-2" />
+                {t('dark')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme('system')}>
+                <Monitor className="w-4 h-4 mr-2" />
+                {t('system')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger 
+              render={
+                <Button variant="ghost" className={cn("w-full justify-start gap-3", isSidebarCollapsed && "justify-center px-0")}>
+                  <Globe className="w-5 h-5" />
+                  {!isSidebarCollapsed && <span>{getLanguageLabel(language)}</span>}
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguage('rw')}>Kinyarwanda</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguage('ar')}>العربية</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button 
+            variant="ghost" 
+            onClick={handleLogout}
+            className={cn(
+              "w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/10",
+              isSidebarCollapsed && "justify-center px-0"
+            )}
+          >
+            <LogOut className="w-5 h-5" />
+            {!isSidebarCollapsed && <span>{t('logout')}</span>}
+          </Button>
+        </div>
+      </aside>
+
+      {/* Mobile Nav */}
+      <div className={cn("md:hidden fixed top-4 z-50", language === 'ar' ? "right-4" : "left-4")}>
+        <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
+          <SheetTrigger 
+            render={
+              <Button variant="outline" size="icon" className="shadow-md bg-background">
+                <Menu className="w-6 h-6" />
+              </Button>
+            }
+          />
+          <SheetContent side={language === 'ar' ? 'right' : 'left'} className="w-64 p-0">
+            <div className="p-6 flex items-center gap-2">
+              <Flame className="w-6 h-6 text-primary" />
+              <span className="font-bold text-xl">GasFlow</span>
+            </div>
+            <nav className="px-4 space-y-2">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  onClick={() => setIsMobileOpen(false)}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
+                    location.pathname === item.href
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+            </nav>
+            <div className="p-4 border-t mt-auto space-y-2">
+               <div className="flex gap-2">
+                 <Button variant="outline" size="sm" className="flex-1" onClick={() => setLanguage('en')}>EN</Button>
+                 <Button variant="outline" size="sm" className="flex-1" onClick={() => setLanguage('rw')}>RW</Button>
+                 <Button variant="outline" size="sm" className="flex-1" onClick={() => setLanguage('ar')}>AR</Button>
+               </div>
+               <div className="flex gap-2">
+                 <Button variant="outline" size="sm" className="flex-1" onClick={() => setTheme('light')}><Sun className="w-4 h-4" /></Button>
+                 <Button variant="outline" size="sm" className="flex-1" onClick={() => setTheme('dark')}><Moon className="w-4 h-4" /></Button>
+                 <Button variant="outline" size="sm" className="flex-1" onClick={() => setTheme('system')}><Monitor className="w-4 h-4" /></Button>
+               </div>
+              <Button 
+                variant="ghost" 
+                onClick={handleLogout}
+                className="w-full justify-start gap-3 text-destructive"
+              >
+                <LogOut className="w-5 h-5" />
+                <span>{t('logout')}</span>
+              </Button>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        <header className="h-16 border-b flex items-center justify-between px-8 bg-card/50 backdrop-blur-md sticky top-0 z-30">
+          <div className="flex items-center gap-4">
+            <h1 className="text-lg font-bold tracking-tight">
+              {navItems.find(item => item.href === location.pathname)?.label || t('dashboard')}
+            </h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-bold leading-none">{profile?.name || 'User'}</p>
+              <p className="text-xs text-muted-foreground capitalize mt-1">{profile?.role || 'Worker'}</p>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-primary shadow-sm">
+              {profile?.name?.charAt(0) || 'U'}
+            </div>
+          </div>
+        </header>
+        <ScrollArea className="flex-1">
+          <div className="p-8 max-w-7xl mx-auto">
+            {children}
+          </div>
+        </ScrollArea>
+      </main>
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\movements\MovementTracking.tsx
+SIZE: 7304 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { useEffect, useState } from "react";
+import { 
+  collection, 
+  onSnapshot, 
+  addDoc, 
+  query, 
+  orderBy,
+  Timestamp,
+  where
+} from "firebase/firestore";
+import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
+import { CylinderMovement } from "@/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { History, ArrowUpRight, ArrowDownRight, Plus, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { format, startOfDay } from "date-fns";
+
+export function MovementTracking() {
+  const [movements, setMovements] = useState<CylinderMovement[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const q = query(collection(db, "movements"), orderBy("timestamp", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setMovements(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as CylinderMovement[]);
+      setLoading(false);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, "movements");
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleAddMovement = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      productId: formData.get("productId") as string,
+      productName: formData.get("productName") as string,
+      type: formData.get("type") as "sent_out" | "returned",
+      quantity: parseInt(formData.get("quantity") as string),
+      timestamp: Timestamp.now(),
+    };
+
+    try {
+      await addDoc(collection(db, "movements"), data);
+      toast.success("Movement logged");
+      setIsDialogOpen(false);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, "movements");
+    }
+  };
+
+  const today = startOfDay(new Date());
+  const todayMovements = movements.filter(m => m.timestamp.toDate() >= today);
+  
+  const stats = {
+    sentOut: todayMovements.filter(m => m.type === "sent_out").reduce((acc, m) => acc + m.quantity, 0),
+    returned: todayMovements.filter(m => m.type === "returned").reduce((acc, m) => acc + m.quantity, 0),
+  };
+
+  if (loading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin" /></div>;
+
+  return (
+    <div className="space-y-8">
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Sent Out (Today)</CardTitle>
+            <ArrowUpRight className="h-4 w-4 text-destructive" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.sentOut}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Returned (Today)</CardTitle>
+            <ArrowDownRight className="h-4 w-4 text-emerald-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.returned}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Movement History</h2>
+          <Button className="gap-2" onClick={() => setIsDialogOpen(true)}>
+            <Plus className="w-4 h-4" />
+            Log Movement
+          </Button>
+        </div>
+        <div className="border rounded-lg bg-card overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Time</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Quantity</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {movements.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                    No movements logged yet.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                movements.map((movement) => (
+                  <TableRow key={movement.id}>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {format(movement.timestamp.toDate(), 'MMM dd, HH:mm')}
+                    </TableCell>
+                    <TableCell className="font-medium">{movement.productName}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {movement.type === "sent_out" ? (
+                          <ArrowUpRight className="w-4 h-4 text-destructive" />
+                        ) : (
+                          <ArrowDownRight className="w-4 h-4 text-emerald-500" />
+                        )}
+                        <span className="capitalize">{movement.type.replace('_', ' ')}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{movement.quantity}</TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Log Cylinder Movement</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAddMovement} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="productName">Product Name</Label>
+              <Input id="productName" name="productName" required />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="type">Movement Type</Label>
+                <Select name="type" defaultValue="sent_out">
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sent_out">Sent Out</SelectItem>
+                    <SelectItem value="returned">Returned</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="quantity">Quantity</Label>
+                <Input id="quantity" name="quantity" type="number" required />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit" className="w-full">Log Movement</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\orders\OrdersManagement.tsx
+SIZE: 8056 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { useEffect, useState } from "react";
+import { 
+  collection, 
+  onSnapshot, 
+  addDoc, 
+  query, 
+  orderBy,
+  Timestamp,
+  updateDoc,
+  doc
+} from "firebase/firestore";
+import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
+import { Order } from "@/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Truck, Package, DollarSign, Plus, Loader2, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { format } from "date-fns";
+
+export function OrdersManagement() {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const q = query(collection(db, "orders"), orderBy("orderDate", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Order[]);
+      setLoading(false);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, "orders");
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleAddOrder = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      supplierName: formData.get("supplierName") as string,
+      productId: formData.get("productId") as string,
+      productName: formData.get("productName") as string,
+      quantity: parseInt(formData.get("quantity") as string),
+      totalCost: parseFloat(formData.get("totalCost") as string),
+      status: "pending",
+      orderDate: Timestamp.now(),
+    };
+
+    try {
+      await addDoc(collection(db, "orders"), data);
+      toast.success("Order placed");
+      setIsDialogOpen(false);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, "orders");
+    }
+  };
+
+  const markAsReceived = async (id: string) => {
+    try {
+      await updateDoc(doc(db, "orders", id), { status: "received" });
+      toast.success("Order marked as received");
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, "orders");
+    }
+  };
+
+  const stats = {
+    pending: orders.filter(o => o.status === "pending").length,
+    totalSpent: orders.reduce((acc, o) => acc + o.totalCost, 0),
+    completed: orders.filter(o => o.status === "received").length,
+  };
+
+  if (loading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin" /></div>;
+
+  return (
+    <div className="space-y-8">
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
+            <Truck className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.pending}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${stats.totalSpent.toLocaleString()}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Completed</CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.completed}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Supplier Orders</h2>
+          <Button className="gap-2" onClick={() => setIsDialogOpen(true)}>
+            <Plus className="w-4 h-4" />
+            New Order
+          </Button>
+        </div>
+        <div className="border rounded-lg bg-card overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Supplier</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead>Qty</TableHead>
+                <TableHead>Cost</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {orders.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    No orders found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                orders.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-medium">{order.supplierName}</TableCell>
+                    <TableCell>{order.productName}</TableCell>
+                    <TableCell>{order.quantity}</TableCell>
+                    <TableCell>${order.totalCost.toFixed(2)}</TableCell>
+                    <TableCell>{format(order.orderDate.toDate(), 'MMM dd, yyyy')}</TableCell>
+                    <TableCell>
+                      <Badge variant={order.status === "pending" ? "outline" : "secondary"}>
+                        {order.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {order.status === "pending" && (
+                        <Button variant="ghost" size="sm" onClick={() => markAsReceived(order.id)}>
+                          Mark Received
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Place New Order</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAddOrder} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="supplierName">Supplier Name</Label>
+              <Input id="supplierName" name="supplierName" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="productName">Product Name</Label>
+              <Input id="productName" name="productName" required />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="quantity">Quantity</Label>
+                <Input id="quantity" name="quantity" type="number" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="totalCost">Total Cost ($)</Label>
+                <Input id="totalCost" name="totalCost" type="number" step="0.01" required />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit" className="w-full">Place Order</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\rentals\RentalSystem.tsx
+SIZE: 8051 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { useEffect, useState } from "react";
+import { 
+  collection, 
+  onSnapshot, 
+  addDoc, 
+  query, 
+  orderBy,
+  Timestamp,
+  updateDoc,
+  doc,
+  where
+} from "firebase/firestore";
+import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
+import { Rental } from "@/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Calendar, User, MapPin, Plus, Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { format, isAfter } from "date-fns";
+
+export function RentalSystem() {
+  const [rentals, setRentals] = useState<Rental[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const q = query(collection(db, "rentals"), orderBy("dueDate", "asc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setRentals(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Rental[]);
+      setLoading(false);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, "rentals");
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleAddRental = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const dueDate = new Date(formData.get("dueDate") as string);
+    
+    const data = {
+      customerName: formData.get("customerName") as string,
+      area: formData.get("area") as string,
+      dueDate: Timestamp.fromDate(dueDate),
+      returned: false,
+      productName: formData.get("productName") as string,
+    };
+
+    try {
+      await addDoc(collection(db, "rentals"), data);
+      toast.success("Rental recorded");
+      setIsDialogOpen(false);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, "rentals");
+    }
+  };
+
+  const markAsReturned = async (id: string) => {
+    try {
+      await updateDoc(doc(db, "rentals", id), { returned: true });
+      toast.success("Cylinder marked as returned");
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, "rentals");
+    }
+  };
+
+  const activeRentals = rentals.filter(r => !r.returned);
+  const overdueCount = activeRentals.filter(r => isAfter(new Date(), r.dueDate.toDate())).length;
+
+  if (loading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin" /></div>;
+
+  return (
+    <div className="space-y-8">
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Rentals</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{activeRentals.length}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Overdue</CardTitle>
+            <AlertCircle className="h-4 w-4 text-destructive" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-destructive">{overdueCount}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Rental Tracking</h2>
+          <Button className="gap-2" onClick={() => setIsDialogOpen(true)}>
+            <Plus className="w-4 h-4" />
+            New Rental
+          </Button>
+        </div>
+        <div className="border rounded-lg bg-card overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Customer</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead>Area</TableHead>
+                <TableHead>Due Date</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rentals.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    No rentals found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                rentals.map((rental) => {
+                  const isOverdue = !rental.returned && isAfter(new Date(), rental.dueDate.toDate());
+                  return (
+                    <TableRow key={rental.id}>
+                      <TableCell className="font-medium">{rental.customerName}</TableCell>
+                      <TableCell>{rental.productName}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1 text-sm">
+                          <MapPin className="w-3 h-3 text-muted-foreground" />
+                          {rental.area}
+                        </div>
+                      </TableCell>
+                      <TableCell className={isOverdue ? "text-destructive font-medium" : ""}>
+                        {format(rental.dueDate.toDate(), 'MMM dd, yyyy')}
+                      </TableCell>
+                      <TableCell>
+                        {rental.returned ? (
+                          <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500">Returned</Badge>
+                        ) : isOverdue ? (
+                          <Badge variant="destructive">Overdue</Badge>
+                        ) : (
+                          <Badge variant="outline">Active</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {!rental.returned && (
+                          <Button variant="ghost" size="sm" onClick={() => markAsReturned(rental.id)}>
+                            Mark Returned
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Record New Rental</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAddRental} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="customerName">Customer Name</Label>
+              <Input id="customerName" name="customerName" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="productName">Product (Cylinder Type)</Label>
+              <Input id="productName" name="productName" required />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="area">Area/Location</Label>
+                <Input id="area" name="area" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dueDate">Due Date</Label>
+                <Input id="dueDate" name="dueDate" type="date" required />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit" className="w-full">Record Rental</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\sales\SalesSystem.tsx
+SIZE: 8519 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { useState, useEffect } from "react";
+import { 
+  collection, 
+  onSnapshot, 
+  addDoc, 
+  doc, 
+  updateDoc, 
+  increment, 
+  Timestamp,
+  query,
+  orderBy
+} from "firebase/firestore";
+import { db, handleFirestoreError, OperationType, auth } from "@/lib/firebase";
+import { Product, Customer } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { toast } from "sonner";
+import { ShoppingCart, Plus, Trash2, Loader2 } from "lucide-react";
+
+export function SalesSystem() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [cart, setCart] = useState<any[]>([]);
+  const [selectedCustomerId, setSelectedCustomerId] = useState("");
+  const [selectedProductId, setSelectedProductId] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'transfer'>("cash");
+  const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
+
+  useEffect(() => {
+    const unsubProducts = onSnapshot(collection(db, "products"), (snapshot) => {
+      setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[]);
+    });
+    const unsubCustomers = onSnapshot(collection(db, "customers"), (snapshot) => {
+      setCustomers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Customer[]);
+      setLoading(false);
+    });
+    return () => { unsubProducts(); unsubCustomers(); };
+  }, []);
+
+  const addToCart = () => {
+    const product = products.find(p => p.id === selectedProductId);
+    if (!product) return;
+    if (product.stockQuantity < quantity) {
+      toast.error("Insufficient stock");
+      return;
+    }
+
+    setCart([...cart, { 
+      id: Date.now(), 
+      productId: product.id, 
+      productName: product.name, 
+      quantity, 
+      price: product.price 
+    }]);
+    setSelectedProductId("");
+    setQuantity(1);
+    toast.success("Added to cart");
+  };
+
+  const removeFromCart = (id: number) => {
+    setCart(cart.filter(item => item.id !== id));
+  };
+
+  const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+  const handleCompleteSale = async () => {
+    if (!selectedCustomerId || cart.length === 0) return;
+    setProcessing(true);
+    const customer = customers.find(c => c.id === selectedCustomerId);
+
+    try {
+      for (const item of cart) {
+        // Record sale
+        await addDoc(collection(db, "sales"), {
+          customerId: selectedCustomerId,
+          customerName: customer?.name || "Unknown",
+          productId: item.productId,
+          productName: item.productName,
+          quantity: item.quantity,
+          totalAmount: item.price * item.quantity,
+          paymentMethod,
+          timestamp: Timestamp.now(),
+          workerId: auth.currentUser?.uid
+        });
+
+        // Update stock
+        await updateDoc(doc(db, "products", item.productId), {
+          stockQuantity: increment(-item.quantity)
+        });
+      }
+
+      toast.success("Sale completed successfully!");
+      setCart([]);
+      setSelectedCustomerId("");
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, "sales");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  if (loading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin" /></div>;
+
+  return (
+    <div className="grid gap-8 md:grid-cols-2">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Plus className="w-5 h-5 text-primary" />
+            New Sale
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Customer</Label>
+            <Select value={selectedCustomerId} onValueChange={setSelectedCustomerId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select customer" />
+              </SelectTrigger>
+              <SelectContent>
+                {customers.map(c => (
+                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label>Product</Label>
+            <Select value={selectedProductId} onValueChange={setSelectedProductId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select gas type" />
+              </SelectTrigger>
+              <SelectContent>
+                {products.map(p => (
+                  <SelectItem key={p.id} value={p.id}>{p.name} (${p.price})</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Quantity</Label>
+              <Input 
+                type="number" 
+                value={quantity} 
+                onChange={(e) => setQuantity(parseInt(e.target.value))} 
+                min={1} 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Payment Method</Label>
+              <Select value={paymentMethod} onValueChange={(v: any) => setPaymentMethod(v)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cash">Cash</SelectItem>
+                  <SelectItem value="card">Card</SelectItem>
+                  <SelectItem value="transfer">Transfer</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <Button className="w-full" onClick={addToCart} disabled={!selectedProductId}>Add to Cart</Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ShoppingCart className="w-5 h-5 text-primary" />
+            Current Cart
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="border rounded-md">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Product</TableHead>
+                  <TableHead>Qty</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {cart.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                      Cart is empty
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  cart.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>{item.productName}</TableCell>
+                      <TableCell>{item.quantity}</TableCell>
+                      <TableCell>${item.price.toFixed(2)}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)}>
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          
+          <div className="flex justify-between items-center pt-4 border-t">
+            <span className="text-lg font-bold">Total:</span>
+            <span className="text-2xl font-bold text-primary">${total.toFixed(2)}</span>
+          </div>
+          
+          <Button 
+            className="w-full h-12 text-lg" 
+            disabled={cart.length === 0 || !selectedCustomerId || processing}
+            onClick={handleCompleteSale}
+          >
+            {processing ? <Loader2 className="animate-spin mr-2" /> : null}
+            Complete Sale
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\stock\StockTable.tsx
+SIZE: 7621 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { useEffect, useState } from "react";
+import { 
+  collection, 
+  onSnapshot, 
+  query, 
+  orderBy, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  doc, 
+  Timestamp 
+} from "firebase/firestore";
+import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
+import { Product } from "@/types";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Edit, Trash2, Plus, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+import { useLanguage } from "@/hooks/useLanguage";
+
+export function StockTable() {
+  const { t } = useLanguage();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  useEffect(() => {
+    const q = query(collection(db, "products"), orderBy("name", "asc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const productList = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Product[];
+      setProducts(productList);
+      setLoading(false);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, "products");
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get("name") as string,
+      type: formData.get("type") as string,
+      price: parseFloat(formData.get("price") as string),
+      stockQuantity: parseInt(formData.get("stockQuantity") as string),
+      lowStockThreshold: parseInt(formData.get("lowStockThreshold") as string),
+    };
+
+    try {
+      if (editingProduct) {
+        await updateDoc(doc(db, "products", editingProduct.id), data);
+        toast.success("Product updated");
+      } else {
+        await addDoc(collection(db, "products"), data);
+        toast.success("Product added");
+      }
+      setIsDialogOpen(false);
+      setEditingProduct(null);
+    } catch (error) {
+      handleFirestoreError(error, editingProduct ? OperationType.UPDATE : OperationType.CREATE, "products");
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+    try {
+      await deleteDoc(doc(db, "products", id));
+      toast.success("Product deleted");
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, "products");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">{t('inventory')}</h2>
+        <Button className="gap-2" onClick={() => { setEditingProduct(null); setIsDialogOpen(true); }}>
+          <Plus className="w-4 h-4" />
+          {t('addProduct')}
+        </Button>
+      </div>
+      <div className="border rounded-lg bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('productName')}</TableHead>
+              <TableHead>{t('type')}</TableHead>
+              <TableHead>{t('price')}</TableHead>
+              <TableHead>{t('stock')}</TableHead>
+              <TableHead>{t('status')}</TableHead>
+              <TableHead className="text-right">{t('actions')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {products.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  No products found. Add your first gas cylinder.
+                </TableCell>
+              </TableRow>
+            ) : (
+              products.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell className="font-medium">{product.name}</TableCell>
+                  <TableCell>{product.type}</TableCell>
+                  <TableCell>${product.price.toFixed(2)}</TableCell>
+                  <TableCell>{product.stockQuantity}</TableCell>
+                  <TableCell>
+                    {product.stockQuantity <= product.lowStockThreshold ? (
+                      <Badge variant="destructive">Low Stock</Badge>
+                    ) : (
+                      <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20">In Stock</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button variant="ghost" size="icon" onClick={() => { setEditingProduct(product); setIsDialogOpen(true); }}>
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(product.id)}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingProduct ? "Edit Product" : t('addProduct')}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSave} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">{t('productName')}</Label>
+              <Input id="name" name="name" defaultValue={editingProduct?.name} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="type">{t('type')} (e.g. Domestic, Industrial)</Label>
+              <Input id="type" name="type" defaultValue={editingProduct?.type} required />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="price">{t('price')} ($)</Label>
+                <Input id="price" name="price" type="number" step="0.01" defaultValue={editingProduct?.price} required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="stockQuantity">{t('stock')}</Label>
+                <Input id="stockQuantity" name="stockQuantity" type="number" defaultValue={editingProduct?.stockQuantity} required />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lowStockThreshold">Low Stock Threshold</Label>
+              <Input id="lowStockThreshold" name="lowStockThreshold" type="number" defaultValue={editingProduct?.lowStockThreshold} required />
+            </div>
+            <DialogFooter>
+              <Button type="submit" className="w-full">
+                {editingProduct ? "Update Product" : "Save Product"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\theme-provider.tsx
+SIZE: 1587 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { createContext, useContext, useEffect, useState } from "react"
+
+type Theme = "dark" | "light" | "system"
+
+interface ThemeProviderProps {
+  children: React.ReactNode
+  defaultTheme?: Theme
+  storageKey?: string
+}
+
+interface ThemeProviderState {
+  theme: Theme
+  setTheme: (theme: Theme) => void
+}
+
+const initialState: ThemeProviderState = {
+  theme: "system",
+  setTheme: () => null,
+}
+
+const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
+
+export function ThemeProvider({
+  children,
+  defaultTheme = "system",
+  storageKey = "gasflow-ui-theme",
+  ...props
+}: ThemeProviderProps) {
+  const [theme, setTheme] = useState<Theme>(
+    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
+  )
+
+  useEffect(() => {
+    const root = window.document.documentElement
+
+    root.classList.remove("light", "dark")
+
+    if (theme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light"
+
+      root.classList.add(systemTheme)
+      return
+    }
+
+    root.classList.add(theme)
+  }, [theme])
+
+  const value = {
+    theme,
+    setTheme: (theme: Theme) => {
+      localStorage.setItem(storageKey, theme)
+      setTheme(theme)
+    },
+  }
+
+  return (
+    <ThemeProviderContext.Provider {...props} value={value}>
+      {children}
+    </ThemeProviderContext.Provider>
+  )
+}
+
+export const useTheme = () => {
+  const context = useContext(ThemeProviderContext)
+
+  if (context === undefined)
+    throw new Error("useTheme must be used within a ThemeProvider")
+
+  return context
+}
+
+
+----------------------------------------------------------------------
+FILE: src\components\ui\sonner.tsx
+SIZE: 1252 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+"use client"
+
+import React from "react"
+import { useTheme } from "next-themes"
+import { Toaster as Sonner, type ToasterProps } from "sonner"
+import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
+
+const Toaster = ({ ...props }: ToasterProps) => {
+  const { theme = "system" } = useTheme()
+
+  return (
+    <Sonner
+      theme={theme as ToasterProps["theme"]}
+      className="toaster group"
+      icons={{
+        success: (
+          <CircleCheckIcon className="size-4" />
+        ),
+        info: (
+          <InfoIcon className="size-4" />
+        ),
+        warning: (
+          <TriangleAlertIcon className="size-4" />
+        ),
+        error: (
+          <OctagonXIcon className="size-4" />
+        ),
+        loading: (
+          <Loader2Icon className="size-4 animate-spin" />
+        ),
+      }}
+      style={
+        {
+          "--normal-bg": "var(--popover)",
+          "--normal-text": "var(--popover-foreground)",
+          "--normal-border": "var(--border)",
+          "--border-radius": "var(--radius)",
+        } as React.CSSProperties
+      }
+      toastOptions={{
+        classNames: {
+          toast: "cn-toast",
+        },
+      }}
+      {...props}
+    />
+  )
+}
+
+export { Toaster }
+
+
+----------------------------------------------------------------------
+FILE: src\hooks\useAuth.ts
+SIZE: 1032 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { useState, useEffect } from 'react';
+
+export interface LocalUser {
+  uid: string;
+  email: string;
+  role: 'admin' | 'manager' | 'worker';
+  name: string;
+}
+
+export function useAuth() {
+  const [user, setUser] = useState<LocalUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('gasflow_user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+    setLoading(false);
+  }, []);
+
+  const login = async (password: string) => {
+    if (password === 'test123') {
+      const adminUser: LocalUser = {
+        uid: 'local-admin',
+        email: 'admin@gasflow.com',
+        role: 'admin',
+        name: 'Administrator'
+      };
+      localStorage.setItem('gasflow_user', JSON.stringify(adminUser));
+      setUser(adminUser);
+      return true;
+    }
+    return false;
+  };
+
+  const logout = async () => {
+    localStorage.removeItem('gasflow_user');
+    setUser(null);
+  };
+
+  return { user, profile: user, loading, login, logout };
+}
+
+
+----------------------------------------------------------------------
+FILE: src\hooks\useLanguage.tsx
+SIZE: 1296 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { useState, useEffect, createContext, useContext } from 'react';
+import { Language, translations } from '../lib/translations';
+
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: keyof typeof translations['en']) => string;
+}
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const [language, setLanguage] = useState<Language>(() => {
+    const saved = localStorage.getItem('app_lang');
+    return (saved as Language) || 'en';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('app_lang', language);
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = language;
+  }, [language]);
+
+  const t = (key: keyof typeof translations['en']) => {
+    return translations[language][key] || translations['en'][key] || key;
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+}
+
+export function useLanguage() {
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return context;
+}
+
+
+----------------------------------------------------------------------
+FILE: src\index.css
+SIZE: 4527 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: var(--font-sans);
+    --font-sans: 'Geist Variable', sans-serif;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
+    }
+}
+
+----------------------------------------------------------------------
+FILE: src\lib\firebase.ts
+SIZE: 1806 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+
+import firebaseConfig from '../../firebase-applet-config.json';
+
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+
+export enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+export interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId: string | undefined;
+    email: string | null | undefined;
+    emailVerified: boolean | undefined;
+    isAnonymous: boolean | undefined;
+    tenantId: string | null | undefined;
+    providerInfo: {
+      providerId: string;
+      displayName: string | null;
+      email: string | null;
+      photoUrl: string | null;
+    }[];
+  }
+}
+
+export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errInfo: FirestoreErrorInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: auth.currentUser?.uid,
+      email: auth.currentUser?.email,
+      emailVerified: auth.currentUser?.emailVerified,
+      isAnonymous: auth.currentUser?.isAnonymous,
+      tenantId: auth.currentUser?.tenantId,
+      providerInfo: auth.currentUser?.providerData.map(provider => ({
+        providerId: provider.providerId,
+        displayName: provider.displayName,
+        email: provider.email,
+        photoUrl: provider.photoURL
+      })) || []
+    },
+    operationType,
+    path
+  };
+  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  throw new Error(JSON.stringify(errInfo));
+}
+
+
+----------------------------------------------------------------------
+FILE: src\lib\translations.ts
+SIZE: 4742 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+export type Language = 'en' | 'rw' | 'ar';
+
+export const translations = {
+  en: {
+    dashboard: "Dashboard",
+    stock: "Stock",
+    sales: "Sales",
+    customers: "Customers",
+    orders: "Orders",
+    movements: "Movements",
+    rentals: "Rentals",
+    admin: "Admin Portal",
+    logout: "Logout",
+    welcome: "Welcome back",
+    signIn: "Sign In",
+    password: "Password",
+    totalRevenue: "Total Revenue",
+    activeCustomers: "Active Customers",
+    gasStock: "Gas Stock",
+    activeRentals: "Active Rentals",
+    recentSales: "Recent Sales",
+    overview: "Overview",
+    inventory: "Inventory",
+    addProduct: "Add Product",
+    productName: "Product Name",
+    type: "Type",
+    price: "Price",
+    status: "Status",
+    actions: "Actions",
+    newSale: "New Sale",
+    customer: "Customer",
+    quantity: "Quantity",
+    paymentMethod: "Payment Method",
+    addToCart: "Add to Cart",
+    cart: "Current Cart",
+    completeSale: "Complete Sale",
+    total: "Total",
+    search: "Search",
+    addCustomer: "Add Customer",
+    phone: "Phone",
+    address: "Address",
+    insights: "Business Insights",
+    settings: "Settings",
+    language: "Language",
+    english: "English",
+    kinyarwanda: "Kinyarwanda",
+    arabic: "Arabic",
+    adminPassword: "Admin Password",
+    accessAdmin: "Access Admin Portal",
+    submit: "Submit",
+    light: "Light",
+    dark: "Dark",
+    system: "System",
+    theme: "Theme"
+  },
+  rw: {
+    dashboard: "Incamake",
+    stock: "Ububiko",
+    sales: "Igurisha",
+    customers: "Abakiriya",
+    orders: "Ibyatumijwe",
+    movements: "Ingendo",
+    rentals: "Ibikodeshwa",
+    admin: "Ubuyobozi",
+    logout: "Sohoka",
+    welcome: "Murakaza neza",
+    signIn: "Injira",
+    password: "Ijambo ry'ibanga",
+    totalRevenue: "Amafaranga yose",
+    activeCustomers: "Abakiriya bakora",
+    gasStock: "Gazi ihari",
+    activeRentals: "Ibikodeshwa",
+    recentSales: "Ibyagurishijwe vuba",
+    overview: "Incamake y'imibare",
+    inventory: "Ibicuruzwa",
+    addProduct: "Ongeraho Igicuruzwa",
+    productName: "Izina ry'igicuruzwa",
+    type: "Ubwoko",
+    price: "Igiciro",
+    status: "Imiterere",
+    actions: "Ibikorwa",
+    newSale: "Igurisha rishya",
+    customer: "Umukiriya",
+    quantity: "Ingano",
+    paymentMethod: "Uburyo bwo kwishyura",
+    addToCart: "Shyira mu gitebo",
+    cart: "Igitebo gihari",
+    completeSale: "Rangiza igurisha",
+    total: "Hose hamwe",
+    search: "Shakisha",
+    addCustomer: "Ongeraho Umukiriya",
+    phone: "Terefone",
+    address: "Aho atuye",
+    insights: "Incamake y'ubucuruzi",
+    settings: "Igenamiterere",
+    language: "Ururimi",
+    english: "Icyongereza",
+    kinyarwanda: "Ikinyarwanda",
+    arabic: "Icyarabu",
+    adminPassword: "Ijambo ry'ibanga ry'ubuyobozi",
+    accessAdmin: "Injira mu buyobozi",
+    submit: "Emeza",
+    light: "Umucyo",
+    dark: "Umwijima",
+    system: "Sisitemu",
+    theme: "Igaragara"
+  },
+  ar: {
+    dashboard: "لوحة القيادة",
+    stock: "المخزون",
+    sales: "المبيعات",
+    customers: "العملاء",
+    orders: "الطلبات",
+    movements: "الحركات",
+    rentals: "الإيجارات",
+    admin: "بوابة المسؤول",
+    logout: "تسجيل الخروج",
+    welcome: "مرحباً بعودتك",
+    signIn: "تسجيل الدخول",
+    password: "كلمة المرور",
+    totalRevenue: "إجمالي الإيرادات",
+    activeCustomers: "العملاء النشطون",
+    gasStock: "مخزون الغاز",
+    activeRentals: "الإيجارات النشطة",
+    recentSales: "المبيعات الأخيرة",
+    overview: "نظرة عامة",
+    inventory: "المخزون",
+    addProduct: "إضافة منتج",
+    productName: "اسم المنتج",
+    type: "النوع",
+    price: "السعر",
+    status: "الحالة",
+    actions: "الإجراءات",
+    newSale: "بيع جديد",
+    customer: "العميل",
+    quantity: "الكمية",
+    paymentMethod: "طريقة الدفع",
+    addToCart: "أضف إلى السلة",
+    cart: "السلة الحالية",
+    completeSale: "إتمام البيع",
+    total: "الإجمالي",
+    search: "بحث",
+    addCustomer: "إضافة عميل",
+    phone: "الهاتف",
+    address: "العنوان",
+    insights: "رؤى الأعمال",
+    settings: "الإعدادات",
+    language: "اللغة",
+    english: "الإنجليزية",
+    kinyarwanda: "كينيارواندا",
+    arabic: "العربية",
+    adminPassword: "كلمة مرور المسؤول",
+    accessAdmin: "الدخول إلى بوابة المسؤول",
+    submit: "إرسال",
+    light: "فاتح",
+    dark: "داكن",
+    system: "النظام",
+    theme: "المظهر"
+  }
+};
+
+
+----------------------------------------------------------------------
+FILE: src\lib\utils.ts
+SIZE: 166 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+
+----------------------------------------------------------------------
+FILE: src\main.tsx
+SIZE: 231 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import {StrictMode} from 'react';
+import {createRoot} from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);
+
+
+----------------------------------------------------------------------
+FILE: src\types\index.ts
+SIZE: 1267 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import { Timestamp } from "firebase/firestore";
+
+export type UserRole = 'admin' | 'manager' | 'worker';
+
+export interface User {
+  uid: string;
+  email: string;
+  role: UserRole;
+  name: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  type: string;
+  price: number;
+  stockQuantity: number;
+  lowStockThreshold: number;
+}
+
+export interface Sale {
+  id: string;
+  customerId: string;
+  customerName: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  totalAmount: number;
+  paymentMethod: 'cash' | 'card' | 'transfer';
+  timestamp: Timestamp;
+  workerId: string;
+}
+
+export interface Order {
+  id: string;
+  supplierName: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  totalCost: number;
+  status: 'pending' | 'received';
+  orderDate: Timestamp;
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  phone: string;
+  address: string;
+  purchaseHistory: string[];
+}
+
+export interface CylinderMovement {
+  id: string;
+  productId: string;
+  productName: string;
+  type: 'sent_out' | 'returned';
+  quantity: number;
+  timestamp: Timestamp;
+}
+
+export interface Rental {
+  id: string;
+  customerName: string;
+  productName: string;
+  dueDate: Timestamp;
+  returned: boolean;
+  area: string;
+}
+
+
+----------------------------------------------------------------------
+FILE: tsconfig.json
+SIZE: 512 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "module": "ESNext",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  }
+}
+
+
+----------------------------------------------------------------------
+FILE: vite.config.ts
+SIZE: 846 bytes | MODIFIED: 2026-04-15 14:21
+----------------------------------------------------------------------
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { defineConfig, loadEnv } from 'vite';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, '.', '');
+  return {
+    plugins: [react(), tailwindcss()],
+    define: {
+      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+    },
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
+    server: {
+      // HMR is disabled in AI Studio via DISABLE_HMR env var.
+      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
+      hmr: process.env.DISABLE_HMR !== 'true',
+    },
+  };
+});
+
+
